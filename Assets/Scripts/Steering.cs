@@ -6,6 +6,7 @@ public class Steering2D : MonoBehaviour
     [SerializeField] Transform _target;
 
     [SerializeField] float _maxSpeed = 5f;
+    [SerializeField] float _maxForce = 10f;
 
     Vector2 _velocity;
 
@@ -22,14 +23,15 @@ public class Steering2D : MonoBehaviour
         transform.up = _velocity;
     }
 
-    public Vector3 Seek(Vector3 target)
+    public Vector2 Seek(Vector2 target)
     {
-        Vector3 desiredVelocity = (target - transform.position).normalized * _maxSpeed;
-
         //desired tiene que tener el tamaño de velocity
-        desiredVelocity.Normalize();
-        desiredVelocity *= _maxSpeed;
-        return desiredVelocity;
+        Vector2 desiredVelocity = (target - (Vector2)transform.position).normalized * _maxSpeed;
+
+        Vector2 steering = desiredVelocity - _velocity;
+        steering = Vector2.ClampMagnitude(steering, _maxForce * Time.deltaTime);
+
+        return steering;
     }
 
     public Vector2 Flee(Vector2 targetPos)
