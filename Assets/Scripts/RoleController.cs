@@ -8,7 +8,7 @@ public class RoleController : MonoBehaviour
 {
     public enum Role { Hunter, Prey }
 
-    [SerializeField] Steering2D _steering;
+    [SerializeField] Steering _steering;
     [SerializeField] Transform _target;
     [SerializeField] Role _startingRole = Role.Prey;
     [SerializeField] float _roleDuration = 8f; // segundos antes de invertir, ajustable

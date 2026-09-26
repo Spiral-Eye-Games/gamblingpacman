@@ -1,7 +1,7 @@
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Steering2D : MonoBehaviour
+public class Steering : MonoBehaviour
 {
     [SerializeField] Transform _target;
 
@@ -23,6 +23,13 @@ public class Steering2D : MonoBehaviour
         transform.up = _velocity;
     }
 
+    public void Move()
+    {
+        transform.position = _velocity * Time.deltaTime;
+        transform.up = _velocity;
+
+    }
+
     public Vector2 Seek(Vector2 target)
     {
         //desired tiene que tener el tamaño de velocity
@@ -37,9 +44,25 @@ public class Steering2D : MonoBehaviour
     public Vector2 Flee(Vector2 targetPos)
     {
         //Flee es Seek invertido, en vez de ir hacia el target, se aleja
-        Vector2 desired = ((Vector2)transform.position - targetPos);
+        return -Seek(targetPos);
+
+        /*Vector2 desired = ((Vector2)transform.position - targetPos);
         desired = desired.normalized * _maxSpeed;
-        return desired;
+        return desired;*/
+    }
+
+    //REVISAR EL STEERING 2D PORQUE EN LA CLASE EL PROFE
+    //PONE STEERINGBEHAVIOUR Y ACA NO ME LO COMPILA A ESO
+    public Vector2 Pursuit(Steering targetAgent)
+    {
+        //Predice la posición futura del target, y lo persigue
+        Vector2 targetPos = (Vector2)targetAgent.transform.position + targetAgent.Velocity * Time.deltaTime;
+        return Seek(targetPos);
+    }
+
+    public Vector2 Evade(Steering targetAgent)
+    {
+        return -Pursuit(targetAgent);
     }
 
     //Recorta el resultado al maxSpeed, la fuerza nunca es mayor que maxSpeed
