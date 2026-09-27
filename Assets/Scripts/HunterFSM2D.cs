@@ -14,7 +14,7 @@ public class HunterFSM2D : MonoBehaviour
 
     [Header("Energía")]
     [SerializeField, Min(0.01f)] float _maximumEnergy = 15f;
-    [SerializeField, Min(0.01f)] float _restSeconds = 4f;
+    [SerializeField, Min(0.01f)] float _restTime = 4f;
     [SerializeField, Min(0f)] float _patrolEnergyPerSecond = 1f;
     [SerializeField, Min(0f)] float _huntingEnergyPerSecond = 2f;
 
@@ -22,7 +22,7 @@ public class HunterFSM2D : MonoBehaviour
     [SerializeField, Min(0.1f)] float _viewRadius = 5f;
     [SerializeField, Min(0.01f)] float _catchRadius = 0.45f;
     [SerializeField, Min(0.01f)] float _waypointRadius = 0.35f;
-    [SerializeField, Min(0f)] float _predictionSeconds = 1f;
+    [SerializeField, Min(0f)] float _predictionTime = 1f;
 
     [Header("Paredes")]
     [SerializeField] LayerMask _walls;
@@ -55,7 +55,7 @@ public class HunterFSM2D : MonoBehaviour
         if (_manager == null) _manager = AIGameManager2D.Instance;
         if (_manager == null)
         {
-            Debug.LogError("HunterFSM2D necesita AIGameManager2D.", this);
+            Debug.LogError("HunterFSM necesita AIGameManager", this);
             enabled = false;
             return;
         }
@@ -113,7 +113,7 @@ public class HunterFSM2D : MonoBehaviour
         return true;
     }
 
-    void MoveWithSafety(Vector2 steering)
+    void SafetyMove(Vector2 steering)
     {
         Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead);
         if (avoid.sqrMagnitude > 0.0001f) steering = avoid;
@@ -144,7 +144,7 @@ public class HunterFSM2D : MonoBehaviour
         public override void OnUpdate()
         {
             _elapsed += Time.deltaTime;
-            if (_elapsed < Hunter._restSeconds) return;
+            if (_elapsed < Hunter._restTime) return;
             Hunter.Energy = Hunter._maximumEnergy;
             Hunter.ChangeState(HunterState.Patrol);
         }
@@ -188,7 +188,7 @@ public class HunterFSM2D : MonoBehaviour
                     1.5f, 1f, 2f);
             }
 
-            Hunter.MoveWithSafety(steering);
+            Hunter.SafetyMove(steering);
         }
     }
 
@@ -213,8 +213,8 @@ public class HunterFSM2D : MonoBehaviour
                 return;
             }
 
-            Hunter.MoveWithSafety(Hunter._motor.Pursuit(
-                Hunter._target.Motor, Hunter._predictionSeconds));
+            Hunter.SafetyMove(Hunter._motor.Pursuit(
+                Hunter._target.Motor, Hunter._predictionTime));
 
             if (Vector2.Distance(Hunter._motor.Position,
                 Hunter._target.Motor.Position) <= Hunter._catchRadius)

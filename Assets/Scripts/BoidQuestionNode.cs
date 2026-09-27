@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BoidQuestionNode : BoidNode
 {
-    public enum Question { FoodNearby, HunterNearby, NeighborsNearby }
+    public enum Question {FoodNearby, HunterNearby, NeighborsNearby}
 
     [SerializeField] Question _question;
     [SerializeField] BoidNode _trueNode;
