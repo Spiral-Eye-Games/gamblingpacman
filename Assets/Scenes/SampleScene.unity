@@ -1492,10 +1492,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8f01872bf22b5d0a58f9ad23ab6b324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boidTemplate: {fileID: 2778265626172236626, guid: 24c45afec92846b408b67d71aa6f0b3e, type: 3}
   _extraBoids: 2
-  _hunterTemplate: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
   _extraHunters: 1
+  _boidAreaCenter: {x: -1.3, y: -2}
+  _boidAreaSize: {x: 2, y: 1.6}
+  _hunterAreaCenter: {x: 1.3, y: 2.3}
+  _hunterAreaSize: {x: 1.8, y: 1.6}
+  _spawnRadius: 0.45
+  _walls:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &2100000101
 GameObject:
   m_ObjectHideFlags: 0

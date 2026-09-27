@@ -223,6 +223,14 @@ public class AIGameManager2D : MonoBehaviour
         return nearest;
     }
 
+    public bool IsInsideArena(Vector2 position, float margin)
+    {
+        Vector2 offset = position - (Vector2)transform.position;
+        Vector2 half = _arenaSize * 0.5f;
+        return Mathf.Abs(offset.x) + margin <= half.x &&
+               Mathf.Abs(offset.y) + margin <= half.y;
+    }
+
     // Solo se teletransporta si el paso entra o cruza una zona definida.
     public Vector2 ApplyWrapAreas(Vector2 previousPosition, Vector2 position)
     {
