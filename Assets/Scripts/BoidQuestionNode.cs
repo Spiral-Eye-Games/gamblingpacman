@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class BoidQuestionNode : BoidNode
 {
-    public enum Question {FoodNearby, HunterNearby, NeighborsNearby}
+    public enum Question {FoodNearby, HunterNearby, NeighborsNearby, PacmanHunter}
 
     [SerializeField] Question _question;
     [SerializeField] BoidNode _trueNode;
     [SerializeField] BoidNode _falseNode;
+
+    public Question QuestionType => _question;
 
     public override void Execute(BoidAgent2D boid)
     {
@@ -21,6 +23,9 @@ public class BoidQuestionNode : BoidNode
                 break;
             case Question.NeighborsNearby:
                 answer = boid.NeighborsNearby;
+                break;
+            case Question.PacmanHunter:
+                answer = boid.PacmanIsHunter;
                 break;
         }
 

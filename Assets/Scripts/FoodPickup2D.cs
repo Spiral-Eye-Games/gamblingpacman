@@ -3,11 +3,11 @@ using UnityEngine;
 // La recogida se decide por distancia desde el boid: no necesita Rigidbody2D.
 public class FoodPickup2D : MonoBehaviour
 {
-    [SerializeField, Min(1)] int _points = 1;
+    [SerializeField, Min(1)] int _foodUnits = 1;
     AIGameManager2D _manager;
     bool _consumed;
 
-    public int Points => _points;
+    public int FoodUnits => _foodUnits;
     public bool IsAvailable => isActiveAndEnabled && !_consumed;
 
     void Start()

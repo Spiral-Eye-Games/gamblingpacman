@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Fantasma cazador del TP: Rest, Patrol y Hunting. Cada estado cambia al siguiente.
+// FSM del fantasma: conserva Rest, Patrol y Hunting del TP y agrega Fleeing.
 [RequireComponent(typeof(Steering))]
 [DisallowMultipleComponent]
 public class HunterFSM2D : MonoBehaviour
 {
-    public enum HunterState { Rest, Patrol, Hunting }
+    public enum HunterState { Rest, Patrol, Hunting, Fleeing }
 
     [Header("Referencias")]
     [SerializeField] AIGameManager2D _manager;
@@ -29,25 +29,33 @@ public class HunterFSM2D : MonoBehaviour
     [SerializeField, Min(0.01f)] float _bodyRadius = 0.3f;
     [SerializeField, Min(0.01f)] float _wallLookAhead = 1.2f;
 
+    [Header("Colisión con fantasmas")]
+    [SerializeField, Min(0.01f)] float _teamCollisionRadius = 0.45f;
+
     Steering _motor;
     readonly Dictionary<HunterState, State> _states = new Dictionary<HunterState, State>();
     State _state;
     BoidAgent2D _target;
     int _waypointIndex;
     float _wanderAngle;
+    bool _alive = true;
 
     public Steering Motor => _motor;
+    public float TeamCollisionRadius => _teamCollisionRadius;
+    public bool IsAlive => _alive && isActiveAndEnabled;
     public float Energy { get; private set; }
     public HunterState CurrentState { get; private set; }
 
     void Awake()
     {
         _motor = GetComponent<Steering>();
+        _motor.ConfigureWallCollision(_walls, _bodyRadius);
         Energy = _maximumEnergy;
         _wanderAngle = Random.Range(-Mathf.PI, Mathf.PI);
         _states.Add(HunterState.Rest, new RestState(this));
         _states.Add(HunterState.Patrol, new PatrolState(this));
         _states.Add(HunterState.Hunting, new HuntingState(this));
+        _states.Add(HunterState.Fleeing, new FleeingState(this));
     }
 
     void Start()
@@ -66,7 +74,7 @@ public class HunterFSM2D : MonoBehaviour
 
     void Update()
     {
-        if (_manager == null || _manager.IsFinished)
+        if (_manager == null || !_manager.IsRunning || !_alive)
         {
             _motor.Stop();
             return;
@@ -94,8 +102,9 @@ public class HunterFSM2D : MonoBehaviour
         float bestDistance = _viewRadius;
         List<BoidAgent2D> boids = _manager.Boids;
 
-        foreach (BoidAgent2D boid in boids)
+        for (int i = 0; i < boids.Count; i++)
         {
+            BoidAgent2D boid = boids[i];
             if (!CanSee(boid)) continue;
             float distance = Vector2.Distance(boid.Motor.Position, _motor.Position);
             if (distance >= bestDistance) continue;
@@ -113,12 +122,23 @@ public class HunterFSM2D : MonoBehaviour
         return true;
     }
 
+    public void CaughtByPacman()
+    {
+        if (!_alive || _manager == null || _manager.Roles == null ||
+            !_manager.Roles.PacmanIsHunter) return;
+        _alive = false;
+        _motor.Stop();
+        _manager.GhostCaught();
+        gameObject.SetActive(false);
+    }
+
     void SafetyMove(Vector2 steering)
     {
         Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead);
         if (avoid.sqrMagnitude > 0.0001f) steering = avoid;
+        Vector2 beforeMove = _motor.Position;
         _motor.Move(steering);
-        transform.position = _manager.AdjustPositionBounds(transform.position);
+        transform.position = _manager.ApplyWrapAreas(beforeMove, transform.position);
     }
 
     abstract class State
@@ -146,7 +166,8 @@ public class HunterFSM2D : MonoBehaviour
             _elapsed += Time.deltaTime;
             if (_elapsed < Hunter._restTime) return;
             Hunter.Energy = Hunter._maximumEnergy;
-            Hunter.ChangeState(HunterState.Patrol);
+            Hunter.ChangeState(Hunter._manager.Roles.PacmanIsHunter
+                ? HunterState.Fleeing : HunterState.Patrol);
         }
     }
 
@@ -156,6 +177,12 @@ public class HunterFSM2D : MonoBehaviour
 
         public override void OnUpdate()
         {
+            if (Hunter._manager.Roles.PacmanIsHunter)
+            {
+                Hunter.ChangeState(HunterState.Fleeing);
+                return;
+            }
+
             Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
                 Hunter._patrolEnergyPerSecond * Time.deltaTime);
             if (Hunter.Energy <= 0f)
@@ -198,6 +225,13 @@ public class HunterFSM2D : MonoBehaviour
 
         public override void OnUpdate()
         {
+            if (Hunter._manager.Roles.PacmanIsHunter)
+            {
+                Hunter._target = null;
+                Hunter.ChangeState(HunterState.Fleeing);
+                return;
+            }
+
             Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
                 Hunter._huntingEnergyPerSecond * Time.deltaTime);
             if (Hunter.Energy <= 0f)
@@ -226,11 +260,36 @@ public class HunterFSM2D : MonoBehaviour
         }
     }
 
+    sealed class FleeingState : State
+    {
+        public FleeingState(HunterFSM2D hunter) : base(hunter) { }
+
+        public override void OnUpdate()
+        {
+            Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
+                Hunter._huntingEnergyPerSecond * Time.deltaTime);
+            if (Hunter.Energy <= 0f)
+            {
+                Hunter.ChangeState(HunterState.Rest);
+                return;
+            }
+
+            BoidAgent2D pursuer = Hunter._manager.FindNearestBoid(
+                Hunter._motor.Position, float.MaxValue);
+            Vector2 steering = pursuer != null
+                ? Hunter._motor.Evade(pursuer.Motor, Hunter._predictionTime)
+                : Hunter._motor.Wander(ref Hunter._wanderAngle, 1.5f, 1f, 2f);
+            Hunter.SafetyMove(steering);
+        }
+    }
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _viewRadius);
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, _catchRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _teamCollisionRadius);
     }
 }

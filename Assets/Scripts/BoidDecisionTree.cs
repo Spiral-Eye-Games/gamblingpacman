@@ -4,5 +4,6 @@ public enum BoidAction
     GoToFood,
     EvadeHunter,
     Flock,
-    Wander
+    Wander,
+    PursueGhost
 }

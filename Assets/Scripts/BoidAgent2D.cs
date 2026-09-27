@@ -8,8 +8,6 @@ public class BoidAgent2D : MonoBehaviour
 {
     [Header("Referencias")]
     [SerializeField] AIGameManager2D _manager;
-    [SerializeField] HunterFSM2D _hunter;
-    [SerializeField] BoidNode _rootNode;
 
     [Header("Percepción y comida")]
     [SerializeField, Min(0.1f)] float _foodSenseRadius = 8f;
@@ -22,6 +20,10 @@ public class BoidAgent2D : MonoBehaviour
     [SerializeField, Min(0f)] float _separationWeight = 1.7f;
     [SerializeField, Min(0f)] float _alignmentWeight = 0.8f;
     [SerializeField, Min(0f)] float _cohesionWeight = 0.6f;
+    [SerializeField, Min(0f)] float _flockWhileSeekingWeight = 0.25f;
+
+    [Header("Colisión con boids")]
+    [SerializeField, Min(0.01f)] float _teamCollisionRadius = 0.45f;
 
     [Header("Paseo y paredes")]
     [SerializeField, Min(0.01f)] float _wanderAhead = 1.5f;
@@ -32,22 +34,28 @@ public class BoidAgent2D : MonoBehaviour
     [SerializeField, Min(0.01f)] float _wallLookAhead = 1.2f;
 
     readonly List<BoidAgent2D> _neighbors = new List<BoidAgent2D>();
+    BoidNode _rootNode;
     Steering _motor;
     FoodPickup2D _foodTarget;
     HunterFSM2D _visibleHunter;
+    HunterFSM2D _ghostTarget;
     float _wanderAngle;
     bool _alive = true;
 
     public Steering Motor => _motor;
+    public float TeamCollisionRadius => _teamCollisionRadius;
     public bool IsAlive => _alive && isActiveAndEnabled;
     public bool FoodNearby => _foodTarget != null;
     public bool HunterNearby => _visibleHunter != null;
     public bool NeighborsNearby => _neighbors.Count > 0;
+    public bool PacmanIsHunter => _manager != null && _manager.Roles != null &&
+        _manager.Roles.PacmanIsHunter;
     public BoidAction CurrentAction { get; private set; }
 
     void Awake()
     {
         _motor = GetComponent<Steering>();
+        _motor.ConfigureWallCollision(_walls, _bodyRadius);
         _wanderAngle = Random.Range(-Mathf.PI, Mathf.PI);
     }
 
@@ -60,9 +68,20 @@ public class BoidAgent2D : MonoBehaviour
             enabled = false;
             return;
         }
+        // El prefab no puede guardar una referencia a un nodo de la escena.
+        // Buscamos la pregunta raíz una vez, al iniciar cada agente.
+        BoidQuestionNode[] questions = FindObjectsByType<BoidQuestionNode>(FindObjectsSortMode.None);
+        for (int i = 0; i < questions.Length; i++)
+        {
+            if (questions[i].QuestionType != BoidQuestionNode.Question.PacmanHunter)
+                continue;
+            _rootNode = questions[i];
+            break;
+        }
+
         if (_rootNode == null)
         {
-            Debug.LogError("Asigná el nodo raíz del árbol a BoidAgent2D.", this);
+            Debug.LogError("No se encontró la pregunta raíz PacmanHunter del árbol de decisión en la escena.", this);
             enabled = false;
             return;
         }
@@ -76,7 +95,7 @@ public class BoidAgent2D : MonoBehaviour
 
     void Update()
     {
-        if (!_alive || _manager == null || _manager.IsFinished)
+        if (!_alive || _manager == null || !_manager.IsRunning)
         {
             if (_motor != null) _motor.Stop();
             return;
@@ -95,13 +114,21 @@ public class BoidAgent2D : MonoBehaviour
         switch (CurrentAction)
         {
             case BoidAction.GoToFood:
-                steering = _motor.Arrive(_foodTarget.transform.position);
+                steering = _foodTarget != null
+                    ? _motor.Arrive(_foodTarget.transform.position) : Vector2.zero;
+                if (_neighbors.Count > 0)
+                    steering += Flock() * _flockWhileSeekingWeight;
                 break;
             case BoidAction.EvadeHunter:
-                steering = _motor.Evade(_visibleHunter.Motor);
+                steering = _visibleHunter != null
+                    ? _motor.Evade(_visibleHunter.Motor) : Vector2.zero;
                 break;
             case BoidAction.Flock:
-                steering = Flock();
+                steering = _neighbors.Count > 0 ? Flock() : Vector2.zero;
+                break;
+            case BoidAction.PursueGhost:
+                steering = _ghostTarget != null
+                    ? _motor.Pursuit(_ghostTarget.Motor) : Vector2.zero;
                 break;
             default:
                 steering = _motor.Wander(ref _wanderAngle,
@@ -113,30 +140,34 @@ public class BoidAgent2D : MonoBehaviour
         Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead);
         if (avoid.sqrMagnitude > 0.0001f) steering = avoid;
 
+        Vector2 beforeMove = _motor.Position;
         _motor.Move(steering);
-        transform.position = _manager.AdjustPositionBounds(transform.position);
+        transform.position = _manager.ApplyWrapAreas(beforeMove, transform.position);
 
         if (CurrentAction == BoidAction.GoToFood && _foodTarget != null &&
             Vector2.Distance(_motor.Position, _foodTarget.transform.position)
             <= _pickupRadius)
             _foodTarget.TryConsume(this);
+
+        if (CurrentAction == BoidAction.PursueGhost && _ghostTarget != null &&
+            Vector2.Distance(_motor.Position, _ghostTarget.Motor.Position)
+            <= _pickupRadius)
+            _ghostTarget.CaughtByPacman();
     }
 
     void Perceive()
     {
         _foodTarget = _manager.FindNearestFood(_motor.Position, _foodSenseRadius);
-        if (_hunter == null) _hunter = _manager.Hunter;
-        _visibleHunter = null;
-
-        if (_hunter != null && _hunter.isActiveAndEnabled &&
-            Vector2.Distance(_motor.Position, _hunter.Motor.Position)
-            <= _hunterSenseRadius)
-            _visibleHunter = _hunter;
+        _visibleHunter = _manager.FindNearestHunter(_motor.Position,
+            _hunterSenseRadius);
+        _ghostTarget = _manager.FindNearestHunter(_motor.Position,
+            float.MaxValue);
 
         _neighbors.Clear();
         List<BoidAgent2D> all = _manager.Boids;
-        foreach (BoidAgent2D other in all)
+        for (int i = 0; i < all.Count; i++)
         {
+            BoidAgent2D other = all[i];
             if (other == null || other == this || !other.IsAlive) continue;
             if (Vector2.Distance(other.Motor.Position, _motor.Position)
                 <= _neighborRadius)
@@ -149,8 +180,9 @@ public class BoidAgent2D : MonoBehaviour
         Vector2 separation = Vector2.zero;
         Vector2 velocitySum = Vector2.zero;
         Vector2 positionSum = Vector2.zero;
-        foreach (BoidAgent2D other in _neighbors)
+        for (int i = 0; i < _neighbors.Count; i++)
         {
+            BoidAgent2D other = _neighbors[i];
             Vector2 away = _motor.Position - other.Motor.Position;
             float distance = away.magnitude;
             if (distance > 0.001f && distance < _separationRadius)
@@ -192,5 +224,7 @@ public class BoidAgent2D : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _hunterSenseRadius);
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, _neighborRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _teamCollisionRadius);
     }
 }
