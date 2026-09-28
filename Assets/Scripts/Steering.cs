@@ -10,6 +10,14 @@ public class Steering : MonoBehaviour
     const float WallSkin = 0.01f;        //margen para no rozar la pared
     const int WallSlidePasses = 2;       //1 pasada frena, la 2da desliza
 
+    const int AvoidDirections = 8;       //prueba una vuelta completa en pasos de 45 grados
+
+    const float AvoidCommitSeconds = 0.6f; //evita cambiar de lado en cada frame
+
+    const float StuckSeconds = 0.3f;
+
+    const int OverlapRepairPasses = 6;
+
     [SerializeField, Min(0.01f)] float _maxSpeed = 5f;
     [SerializeField, Min(0.01f)] float _maxForce = 10f;
     [SerializeField, Min(0.01f)] float _arrivalRadius = 1.5f;
@@ -25,8 +33,12 @@ public class Steering : MonoBehaviour
 
     LayerMask _collisionWalls;
     float _collisionRadius;
+    Vector2 _avoidDirection;
+    float _avoidUntil;
+    float _blockedSeconds;
 
     public Vector2 Position => transform.position;
+    public Vector2 FrameStartPosition { get; private set; }
     public Vector2 Velocity => _velocity;
     public Vector2 Heading => _velocity.sqrMagnitude > MinSpeedSqr
         ? _velocity.normalized
@@ -40,6 +52,7 @@ public class Steering : MonoBehaviour
     {
         _collisionWalls = walls;
         _collisionRadius = Mathf.Max(0.01f, bodyRadius);
+        FrameStartPosition = Position;
     }
 
     // --- Comportamientos: cada uno devuelve el cambio de velocidad deseado ---
@@ -89,23 +102,68 @@ public class Steering : MonoBehaviour
         return Seek(circleCenter + offset);
     }
 
-    // Dos rayos laterales. El LayerMask debe contener SOLO paredes.
-    public Vector2 AvoidObstacles(LayerMask walls, float bodyRadius, float lookAhead)
+    // Busca una salida libre alrededor del agente cuando su movimiento choca con una pared.
+    // El LayerMask debe contener SOLO paredes.
+    public Vector2 AvoidObstacles(LayerMask walls, float bodyRadius, float lookAhead,
+        Vector2 steering)
     {
         if (walls.value == 0) return Vector2.zero;
 
-        Vector2 forward = Heading;
-        Vector2 left = new Vector2(-forward.y, forward.x);
-        RaycastHit2D leftHit = Physics2D.Raycast(Position + left * bodyRadius,
-            forward, lookAhead, walls);
-        RaycastHit2D rightHit = Physics2D.Raycast(Position - left * bodyRadius,
-            forward, lookAhead, walls);
+        float radius = Mathf.Max(0.01f, bodyRadius);
+        float distance = Mathf.Max(0.01f, lookAhead);
+        Vector2 nextVelocity = _velocity +
+            Vector2.ClampMagnitude(steering, _maxForce * Time.deltaTime);
+        if (nextVelocity.sqrMagnitude < MinSpeedSqr) return Vector2.zero;
+        Vector2 desired = nextVelocity.normalized;
 
-        if (leftHit.collider == null && rightHit.collider == null) return Vector2.zero;
-        if (leftHit.collider != null && rightHit.collider != null)
-            return Flee(Position + forward * lookAhead);
-        if (leftHit.collider != null) return Seek(Position - left * lookAhead);
-        return Seek(Position + left * lookAhead);
+        // Seguimos un momento por la salida elegida para no oscilar en una esquina.
+        if (Time.time < _avoidUntil && _avoidDirection.sqrMagnitude > MinSpeedSqr)
+        {
+            RaycastHit2D committedHit = Physics2D.CircleCast(Position, radius,
+                _avoidDirection, distance * 0.4f, walls);
+            if (committedHit.collider == null)
+                return _avoidDirection * MaxSpeed - _velocity;
+        }
+
+        RaycastHit2D forwardHit = Physics2D.CircleCast(Position, radius,
+            desired, distance, walls);
+        if (forwardHit.collider == null)
+        {
+            _avoidUntil = 0f;
+            return Vector2.zero;
+        }
+
+        Vector2 bestDirection = Vector2.zero;
+        float bestScore = float.NegativeInfinity;
+        float bestClearance = 0f;
+
+        for (int i = 0; i < AvoidDirections; i++)
+        {
+            float angle = i * Mathf.PI * 2f / AvoidDirections;
+            float cosine = Mathf.Cos(angle);
+            float sine = Mathf.Sin(angle);
+            Vector2 candidate = new Vector2(
+                desired.x * cosine - desired.y * sine,
+                desired.x * sine + desired.y * cosine);
+            RaycastHit2D hit = Physics2D.CircleCast(Position, radius,
+                candidate, distance, walls);
+            float clearance = hit.collider == null ? distance : hit.distance;
+            float score = clearance +
+                Vector2.Dot(candidate, desired) * distance * 0.15f +
+                Vector2.Dot(candidate, _avoidDirection) * distance * 0.1f;
+            if (score <= bestScore) continue;
+            bestScore = score;
+            bestClearance = clearance;
+            bestDirection = candidate;
+        }
+
+        // Si ya está rozando dos paredes, la normal del choque indica cómo salir.
+        if (bestClearance < WallSkin * 2f && forwardHit.normal.sqrMagnitude > MinSpeedSqr)
+            bestDirection = forwardHit.normal;
+
+        _avoidDirection = bestDirection.normalized;
+        _avoidUntil = Time.time + AvoidCommitSeconds;
+        return _avoidDirection * MaxSpeed - _velocity;
     }
 
     // --- Movimiento ---
@@ -115,12 +173,35 @@ public class Steering : MonoBehaviour
         float dt = Time.deltaTime;
         if (dt <= 0f) return;
 
+        FrameStartPosition = Position;
         Vector2 deltaVelocity = Vector2.ClampMagnitude(steering, _maxForce * dt);
         _velocity = Vector2.ClampMagnitude(_velocity + deltaVelocity, MaxSpeed);
+        Vector2 intendedMovement = _velocity * dt;
 
         // Sin Rigidbody2D: el cast de MoveWithWalls es lo que impide atravesar paredes.
-        Vector2 movement = MoveWithWalls(_velocity * dt);
-        _velocity = movement / dt;
+        Vector2 movement = MoveWithWalls(intendedMovement);
+        _velocity = Vector2.ClampMagnitude(movement / dt, MaxSpeed);
+
+        // Si queda presionado contra una esquina, retrocede un momento para salir.
+        if (intendedMovement.sqrMagnitude > 0.0001f &&
+            movement.sqrMagnitude < intendedMovement.sqrMagnitude * 0.04f)
+            _blockedSeconds += dt;
+        else
+            _blockedSeconds = 0f;
+
+        if (_blockedSeconds >= StuckSeconds && _collisionWalls.value != 0)
+        {
+            Vector2 retreat = -intendedMovement.normalized;
+            RaycastHit2D hit = Physics2D.CircleCast(Position, _collisionRadius,
+                retreat, _collisionRadius * 2f, _collisionWalls);
+            if (hit.collider == null)
+            {
+                _avoidDirection = retreat;
+                _avoidUntil = Time.time + AvoidCommitSeconds * 2f;
+            }
+            _velocity = Vector2.zero;
+            _blockedSeconds = 0f;
+        }
 
         FaceVelocity();
     }
@@ -135,8 +216,17 @@ public class Steering : MonoBehaviour
     public void Stop()
     {
         _velocity = Vector2.zero;
+        FrameStartPosition = Position;
         _pendingSteering = Vector2.zero;
         _hasPendingSteering = false;
+        _avoidDirection = Vector2.zero;
+        _avoidUntil = 0f;
+        _blockedSeconds = 0f;
+    }
+
+    public void MarkFrameEnd()
+    {
+        FrameStartPosition = Position;
     }
 
     // Separa dos agentes que se solapan, sin Rigidbody2D.
@@ -154,7 +244,7 @@ public class Steering : MonoBehaviour
     Vector2 MoveWithWalls(Vector2 displacement)
     {
         Vector2 start = Position;
-        Vector2 position = start;
+        Vector2 position = RepairWallOverlap(start);
         Vector2 remaining = displacement;
 
         for (int pass = 0; pass < WallSlidePasses; pass++)
@@ -188,6 +278,47 @@ public class Steering : MonoBehaviour
 
         transform.position = new Vector3(position.x, position.y, transform.position.z);
         return position - start;
+    }
+
+    // Si el círculo empezó ligeramente dentro de una pared, un CircleCast normal
+    // informa choque a distancia cero en todas las direcciones y no puede salir.
+    Vector2 RepairWallOverlap(Vector2 position)
+    {
+        if (_collisionWalls.value == 0) return position;
+
+        for (int pass = 0; pass < OverlapRepairPasses; pass++)
+        {
+            Collider2D wall = Physics2D.OverlapCircle(position, _collisionRadius,
+                _collisionWalls);
+            if (wall == null) break;
+
+            Vector2 closest = wall.ClosestPoint(position);
+            Vector2 away = position - closest;
+            float separation = away.magnitude;
+            if (separation > 0.0001f)
+            {
+                position += away / separation *
+                    (_collisionRadius + WallSkin - separation);
+                continue;
+            }
+
+            // Centro dentro del collider: escoger la cara más cercana.
+            Bounds bounds = wall.bounds;
+            float left = position.x - bounds.min.x;
+            float right = bounds.max.x - position.x;
+            float bottom = position.y - bounds.min.y;
+            float top = bounds.max.y - position.y;
+            float shortest = Mathf.Min(left, right, bottom, top);
+            if (shortest == left)
+                position.x -= left + _collisionRadius + WallSkin;
+            else if (shortest == right)
+                position.x += right + _collisionRadius + WallSkin;
+            else if (shortest == bottom)
+                position.y -= bottom + _collisionRadius + WallSkin;
+            else
+                position.y += top + _collisionRadius + WallSkin;
+        }
+        return position;
     }
 
     // Boost temporal comprado con la moneda de la apuesta. Se apaga solo al vencer el tiempo.

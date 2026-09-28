@@ -131,7 +131,7 @@ MonoBehaviour:
   _huntingEnergyPerSecond: 2
   _viewRadius: 3.59
   _catchRadius: 0.45
-  _waypointRadius: 4
+  _waypointRadius: 0.35
   _predictionTime: 1
   _walls:
     serializedVersion: 2

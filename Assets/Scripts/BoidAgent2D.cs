@@ -43,6 +43,7 @@ public class BoidAgent2D : MonoBehaviour
     bool _alive = true;
 
     public Steering Motor => _motor;
+    public float CaptureRadius => _pickupRadius;
     public float TeamCollisionRadius => _teamCollisionRadius;
     public bool IsAlive => _alive && isActiveAndEnabled;
     public bool FoodNearby => _foodTarget != null;
@@ -137,7 +138,8 @@ public class BoidAgent2D : MonoBehaviour
         }
 
         // Seguridad local por encima de la acción elegida.
-        Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead);
+        Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead,
+            steering);
         if (avoid.sqrMagnitude > 0.0001f) steering = avoid;
 
         Vector2 beforeMove = _motor.Position;
@@ -148,11 +150,6 @@ public class BoidAgent2D : MonoBehaviour
             Vector2.Distance(_motor.Position, _foodTarget.transform.position)
             <= _pickupRadius)
             _foodTarget.TryConsume(this);
-
-        if (CurrentAction == BoidAction.PursueGhost && _ghostTarget != null &&
-            Vector2.Distance(_motor.Position, _ghostTarget.Motor.Position)
-            <= _pickupRadius)
-            _ghostTarget.CaughtByPacman();
     }
 
     void Perceive()
@@ -222,6 +219,8 @@ public class BoidAgent2D : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, _foodSenseRadius);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _hunterSenseRadius);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, _pickupRadius);
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, _neighborRadius);
         Gizmos.color = Color.green;

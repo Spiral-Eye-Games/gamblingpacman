@@ -47,6 +47,7 @@ public class HunterFSM2D : MonoBehaviour
     bool _alive = true;
 
     public Steering Motor => _motor;
+    public float CaptureRadius => _catchRadius;
     public float TeamCollisionRadius => _teamCollisionRadius;
     public bool IsAlive => _alive && isActiveAndEnabled;
     public float Energy { get; private set; }
@@ -181,13 +182,6 @@ public class HunterFSM2D : MonoBehaviour
         }
 
         SafetyMove(_motor.Pursuit(_target.Motor, _predictionTime));
-
-        if (Vector2.Distance(_motor.Position, _target.Motor.Position) <= _catchRadius)
-        {
-            _target.Caught();
-            _target = null;
-            ChangeState(HunterState.Patrol);
-        }
     }
 
     void UpdateFleeing()
@@ -243,7 +237,8 @@ public class HunterFSM2D : MonoBehaviour
 
     void SafetyMove(Vector2 steering)
     {
-        Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead);
+        Vector2 avoid = _motor.AvoidObstacles(_walls, _bodyRadius, _wallLookAhead,
+            steering);
         if (avoid.sqrMagnitude > 0.0001f) steering = avoid;
         Vector2 beforeMove = _motor.Position;
         _motor.Move(steering);

@@ -119,6 +119,66 @@ public class AIGameManager2D : MonoBehaviour
                 }
             }
         }
+
+        ResolveCaptures();
+        for (int i = 0; i < _boids.Count; i++)
+            if (_boids[i] != null && _boids[i].IsAlive)
+                _boids[i].Motor.MarkFrameEnd();
+        for (int i = 0; i < _hunters.Count; i++)
+            if (_hunters[i] != null && _hunters[i].IsAlive)
+                _hunters[i].Motor.MarkFrameEnd();
+    }
+
+    // Se comprueba al final del frame para incluir movimiento y separación entre compañeros.
+    // La captura depende del bando cazador, aunque el fantasma esté descansando.
+    void ResolveCaptures()
+    {
+        if (_roles == null || !_running) return;
+        bool pacmanHunts = _roles.PacmanIsHunter;
+
+        for (int i = 0; i < _boids.Count; i++)
+        {
+            BoidAgent2D boid = _boids[i];
+            if (boid == null || !boid.IsAlive) continue;
+            for (int j = 0; j < _hunters.Count; j++)
+            {
+                HunterFSM2D ghost = _hunters[j];
+                if (ghost == null || !ghost.IsAlive) continue;
+                float radius = pacmanHunts ? boid.CaptureRadius : ghost.CaptureRadius;
+                if (!PathsTouch(boid.Motor, ghost.Motor, radius)) continue;
+
+                if (pacmanHunts) ghost.CaughtByPacman();
+                else boid.Caught();
+                return; // una captura puede cambiar el resultado y las listas
+            }
+        }
+    }
+
+    // Distancia mínima entre las trayectorias de los dos agentes durante este frame.
+    // Así se detecta también un cruce rápido que no termina en solapamiento.
+    static bool PathsTouch(Steering first, Steering second, float radius)
+    {
+        Vector2 firstEnd = first.Position;
+        Vector2 secondEnd = second.Position;
+        float radiusSqr = radius * radius;
+        if ((firstEnd - secondEnd).sqrMagnitude <= radiusSqr) return true;
+
+        Vector2 firstStart = first.FrameStartPosition;
+        Vector2 secondStart = second.FrameStartPosition;
+        float maxFirstStep = first.MaxSpeed * Time.deltaTime + 0.5f;
+        float maxSecondStep = second.MaxSpeed * Time.deltaTime + 0.5f;
+        if ((firstEnd - firstStart).sqrMagnitude > maxFirstStep * maxFirstStep)
+            firstStart = firstEnd; // wraparound: el teletransporte no es una captura
+        if ((secondEnd - secondStart).sqrMagnitude > maxSecondStep * maxSecondStep)
+            secondStart = secondEnd;
+
+        Vector2 relativeStart = firstStart - secondStart;
+        Vector2 relativeMove = (firstEnd - firstStart) - (secondEnd - secondStart);
+        float lengthSqr = relativeMove.sqrMagnitude;
+        float t = lengthSqr > 0.000001f
+            ? Mathf.Clamp01(-Vector2.Dot(relativeStart, relativeMove) / lengthSqr)
+            : 0f;
+        return (relativeStart + relativeMove * t).sqrMagnitude <= radiusSqr;
     }
 
     static void SeparateTeammates(Steering first, float firstRadius,
