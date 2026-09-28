@@ -2,11 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Mantiene los participantes y decide el ganador de cada ronda.
+// Mantiene los participantes, resuelve las capturas y decide el ganador de cada ronda.
 public class AIGameManager2D : MonoBehaviour
 {
     public static AIGameManager2D Instance { get; private set; }
 
+    // Números técnicos con nombre, no son para ajustar el juego, por eso no van al inspector
+    const float MinDistance = 0.0001f;          // "es prácticamente el mismo punto"
+    const float MinRelativeMoveSqr = 0.000001f; // "los dos agentes se mueven igual"
+    const float TeleportMargin = 0.5f;          // tolerancia para distinguir un paso normal de un teletransporte
+
+    // Zona de entrada que teletransporta a una salida (los túneles del mapa).
     [Serializable]
     public class WrapArea
     {
@@ -20,6 +26,7 @@ public class AIGameManager2D : MonoBehaviour
         public Vector2 EntrySize => _entrySize;
         public Vector2 ExitLocalPosition => _exitLocalPosition;
 
+        // Conserva en la salida el desplazamiento en X y/o Y con el que se entró.
         public Vector2 ExitOffset(Vector2 entryOffset)
         {
             return new Vector2(_keepX ? entryOffset.x : 0f,
@@ -33,10 +40,13 @@ public class AIGameManager2D : MonoBehaviour
         }
     }
 
-    [SerializeField] HunterFSM2D _hunter;
+    [Header("Separación entre compañeros")]
+    [SerializeField, Min(1)] int _separationPasses = 3;
+
     [Header("Zonas de wraparound")]
     [SerializeField] WrapArea[] _wrapAreas = new WrapArea[0];
-    [Header("Guía visual de la arena")]
+
+    [Header("Arena")]
     [SerializeField] Vector2 _arenaSize = new Vector2(16f, 9f);
 
     readonly List<BoidAgent2D> _boids = new List<BoidAgent2D>();
@@ -51,7 +61,6 @@ public class AIGameManager2D : MonoBehaviour
 
     public List<BoidAgent2D> Boids => _boids;
     public List<HunterFSM2D> Hunters => _hunters;
-    public HunterFSM2D Hunter => _hunter;
     public RoleSwapManager Roles => _roles;
     public bool IsRunning => _running;
     public bool IsFinished => _finished;
@@ -84,51 +93,71 @@ public class AIGameManager2D : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+    // --- Fin de cada frame: los agentes ya se movieron en su Update ---
+
     void LateUpdate()
     {
         if (!_running) return;
 
-        // Los agentes se mueven en Update; luego se corrige el solapamiento.
-        // Tres pasadas alcanzan para los pequeños grupos de esta escena.
-        for (int pass = 0; pass < 3; pass++)
+        for (int pass = 0; pass < _separationPasses; pass++)
         {
-            for (int i = 0; i < _boids.Count; i++)
-            {
-                BoidAgent2D first = _boids[i];
-                if (first == null || !first.IsAlive) continue;
-                for (int j = i + 1; j < _boids.Count; j++)
-                {
-                    BoidAgent2D second = _boids[j];
-                    if (second == null || !second.IsAlive) continue;
-                    SeparateTeammates(first.Motor, first.TeamCollisionRadius,
-                        second.Motor, second.TeamCollisionRadius);
-                }
-            }
-
-            for (int i = 0; i < _hunters.Count; i++)
-            {
-                HunterFSM2D first = _hunters[i];
-                if (first == null || !first.IsAlive) continue;
-                for (int j = i + 1; j < _hunters.Count; j++)
-                {
-                    HunterFSM2D second = _hunters[j];
-                    if (second == null || !second.IsAlive) continue;
-                    SeparateTeammates(first.Motor, first.TeamCollisionRadius,
-                        second.Motor, second.TeamCollisionRadius);
-                }
-            }
+            SeparateBoids();
+            SeparateHunters();
         }
 
         ResolveCaptures();
-        for (int i = 0; i < _boids.Count; i++)
-            if (_boids[i] != null && _boids[i].IsAlive)
-                _boids[i].Motor.MarkFrameEnd();
-        for (int i = 0; i < _hunters.Count; i++)
-            if (_hunters[i] != null && _hunters[i].IsAlive)
-                _hunters[i].Motor.MarkFrameEnd();
+        MarkFrameEnd();
     }
 
-    // Se comprueba al final del frame para incluir movimiento y separación entre compañeros.
+    void SeparateBoids()
+    {
+        for (int i = 0; i < _boids.Count; i++)
+        {
+            BoidAgent2D first = _boids[i];
+            if (first == null || !first.IsAlive) continue;
+            for (int j = i + 1; j < _boids.Count; j++)
+            {
+                BoidAgent2D second = _boids[j];
+                if (second == null || !second.IsAlive) continue;
+                SeparateTeammates(first.Motor, first.TeamCollisionRadius,
+                    second.Motor, second.TeamCollisionRadius);
+            }
+        }
+    }
+
+    void SeparateHunters()
+    {
+        for (int i = 0; i < _hunters.Count; i++)
+        {
+            HunterFSM2D first = _hunters[i];
+            if (first == null || !first.IsAlive) continue;
+            for (int j = i + 1; j < _hunters.Count; j++)
+            {
+                HunterFSM2D second = _hunters[j];
+                if (second == null || !second.IsAlive) continue;
+                SeparateTeammates(first.Motor, first.TeamCollisionRadius,
+                    second.Motor, second.TeamCollisionRadius);
+            }
+        }
+    }
+    
+
+    // Si dos compañeros se solapan, los aleja a mitad de camino cada uno.
+    static void SeparateTeammates(IAgentMotor first, float firstRadius,
+    IAgentMotor second, float secondRadius)
+    {
+        Vector2 difference = first.Position - second.Position;
+        float distance = difference.magnitude;
+        float minimumDistance = firstRadius + secondRadius;
+        if (distance >= minimumDistance) return;
+
+        Vector2 direction = distance > MinDistance
+            ? difference / distance : Vector2.right;
+        Vector2 correction = direction * ((minimumDistance - distance) * 0.5f);
+        first.PushOut(correction);
+        second.PushOut(-correction);
+    }
+
     // La captura depende del bando cazador, aunque el fantasma esté descansando.
     void ResolveCaptures()
     {
@@ -153,47 +182,51 @@ public class AIGameManager2D : MonoBehaviour
         }
     }
 
-    // Distancia mínima entre las trayectorias de los dos agentes durante este frame.
-    // Así se detecta también un cruce rápido que no termina en solapamiento.
-    static bool PathsTouch(Steering first, Steering second, float radius)
+    // ¿Se tocaron los dos agentes en algún momento de este frame?
+    // Además del punto final, se revisa la trayectoria: así también cuenta
+    // un cruce rápido que no termina en solapamiento.
+    static bool PathsTouch(IAgentMotor first, IAgentMotor second, float radius)
     {
         Vector2 firstEnd = first.Position;
         Vector2 secondEnd = second.Position;
         float radiusSqr = radius * radius;
+
+        // Caso simple: al final del frame ya se están tocando.
         if ((firstEnd - secondEnd).sqrMagnitude <= radiusSqr) return true;
 
-        Vector2 firstStart = first.FrameStartPosition;
-        Vector2 secondStart = second.FrameStartPosition;
-        float maxFirstStep = first.MaxSpeed * Time.deltaTime + 0.5f;
-        float maxSecondStep = second.MaxSpeed * Time.deltaTime + 0.5f;
-        if ((firstEnd - firstStart).sqrMagnitude > maxFirstStep * maxFirstStep)
-            firstStart = firstEnd; // wraparound: el teletransporte no es una captura
-        if ((secondEnd - secondStart).sqrMagnitude > maxSecondStep * maxSecondStep)
-            secondStart = secondEnd;
-
+        // Caso del cruce rápido: se busca el momento del frame en que estuvieron más cerca.
+        Vector2 firstStart = FrameStart(first);
+        Vector2 secondStart = FrameStart(second);
         Vector2 relativeStart = firstStart - secondStart;
         Vector2 relativeMove = (firstEnd - firstStart) - (secondEnd - secondStart);
-        float lengthSqr = relativeMove.sqrMagnitude;
-        float t = lengthSqr > 0.000001f
-            ? Mathf.Clamp01(-Vector2.Dot(relativeStart, relativeMove) / lengthSqr)
+        float moveSqr = relativeMove.sqrMagnitude;
+
+        // t va de 0 (inicio del frame) a 1 (final): cuándo estuvieron más cerca.
+        float t = moveSqr > MinRelativeMoveSqr
+            ? Mathf.Clamp01(-Vector2.Dot(relativeStart, relativeMove) / moveSqr)
             : 0f;
         return (relativeStart + relativeMove * t).sqrMagnitude <= radiusSqr;
     }
 
-    static void SeparateTeammates(Steering first, float firstRadius,
-        Steering second, float secondRadius)
+    // Punto donde el agente empezó el frame. Si se movió más de lo posible, fue un
+    // teletransporte (wraparound) y no una captura: se usa el punto final como inicio.
+    static Vector2 FrameStart(IAgentMotor agent)
     {
-        Vector2 difference = first.Position - second.Position;
-        float distance = difference.magnitude;
-        float minimumDistance = firstRadius + secondRadius;
-        if (distance >= minimumDistance) return;
-
-        Vector2 direction = distance > 0.0001f
-            ? difference / distance : Vector2.right;
-        Vector2 correction = direction * ((minimumDistance - distance) * 0.5f);
-        first.PushOut(correction);
-        second.PushOut(-correction);
+        Vector2 end = agent.Position;
+        Vector2 start = agent.FrameStartPosition;
+        float maxStep = agent.MaxSpeed * Time.deltaTime + TeleportMargin;
+        return (end - start).sqrMagnitude > maxStep * maxStep ? end : start;
     }
+
+    void MarkFrameEnd()
+    {
+        foreach (BoidAgent2D boid in _boids)
+            if (boid != null && boid.IsAlive) boid.Motor.MarkFrameEnd();
+        foreach (HunterFSM2D hunter in _hunters)
+            if (hunter != null && hunter.IsAlive) hunter.Motor.MarkFrameEnd();
+    }
+
+    // --- Ronda ---
 
     public bool BeginMatch()
     {
@@ -207,6 +240,51 @@ public class AIGameManager2D : MonoBehaviour
         return true;
     }
 
+    public void FoodConsumed(FoodPickup2D item)
+    {
+        if (!_running || _finished || item == null || _roles == null) return;
+        _roles.AddFood(item.FoodUnits);
+    }
+
+    // Ganan los fantasmas cuando no queda ningún boid vivo.
+    public void BoidCaught()
+    {
+        if (!_running || _finished || AnyBoidAlive()) return;
+        Finish(MatchSide.Ghosts);
+    }
+
+    // Gana Pacman cuando no queda ningún fantasma vivo.
+    public void GhostCaught()
+    {
+        if (!_running || _finished || AnyHunterAlive()) return;
+        Finish(MatchSide.Pacman);
+    }
+
+    bool AnyBoidAlive()
+    {
+        foreach (BoidAgent2D boid in _boids)
+            if (boid != null && boid.IsAlive) return true;
+        return false;
+    }
+
+    bool AnyHunterAlive()
+    {
+        foreach (HunterFSM2D hunter in _hunters)
+            if (hunter != null && hunter.IsAlive) return true;
+        return false;
+    }
+
+    void Finish(MatchSide winner)
+    {
+        _running = false;
+        _finished = true;
+        _winner = winner;
+        Debug.Log("Ganó " + BettingManager.SideName(winner), this);
+        MatchFinished?.Invoke(winner);
+    }
+
+    // --- Registro de participantes ---
+
     public void RegisterBoid(BoidAgent2D boid)
     {
         if (boid != null && !_boids.Contains(boid)) _boids.Add(boid);
@@ -219,9 +297,7 @@ public class AIGameManager2D : MonoBehaviour
 
     public void RegisterHunter(HunterFSM2D hunter)
     {
-        if (hunter == null || _hunters.Contains(hunter)) return;
-        _hunters.Add(hunter);
-        if (_hunter == null) _hunter = hunter;
+        if (hunter != null && !_hunters.Contains(hunter)) _hunters.Add(hunter);
     }
 
     public void RegisterFood(FoodPickup2D item)
@@ -234,13 +310,14 @@ public class AIGameManager2D : MonoBehaviour
         _food.Remove(item);
     }
 
+    // --- Búsquedas: el más cercano dentro del radio, o null si no hay ---
+
     public FoodPickup2D FindNearestFood(Vector2 position, float radius)
     {
         FoodPickup2D nearest = null;
         float bestDistance = radius;
-        for (int i = 0; i < _food.Count; i++)
+        foreach (FoodPickup2D item in _food)
         {
-            FoodPickup2D item = _food[i];
             if (item == null || !item.IsAvailable) continue;
             float distance = Vector2.Distance(item.transform.position, position);
             if (distance >= bestDistance) continue;
@@ -254,9 +331,8 @@ public class AIGameManager2D : MonoBehaviour
     {
         HunterFSM2D nearest = null;
         float bestDistance = radius;
-        for (int i = 0; i < _hunters.Count; i++)
+        foreach (HunterFSM2D hunter in _hunters)
         {
-            HunterFSM2D hunter = _hunters[i];
             if (hunter == null || !hunter.IsAlive) continue;
             float distance = Vector2.Distance(hunter.Motor.Position, position);
             if (distance >= bestDistance) continue;
@@ -270,9 +346,8 @@ public class AIGameManager2D : MonoBehaviour
     {
         BoidAgent2D nearest = null;
         float bestDistance = radius;
-        for (int i = 0; i < _boids.Count; i++)
+        foreach (BoidAgent2D boid in _boids)
         {
-            BoidAgent2D boid = _boids[i];
             if (boid == null || !boid.IsAlive) continue;
             float distance = Vector2.Distance(boid.Motor.Position, position);
             if (distance >= bestDistance) continue;
@@ -282,6 +357,8 @@ public class AIGameManager2D : MonoBehaviour
         return nearest;
     }
 
+    // --- Arena y túneles ---
+
     public bool IsInsideArena(Vector2 position, float margin)
     {
         Vector2 offset = position - (Vector2)transform.position;
@@ -290,31 +367,27 @@ public class AIGameManager2D : MonoBehaviour
                Mathf.Abs(offset.y) + margin <= half.y;
     }
 
-    // Solo se teletransporta si el paso entra o cruza una zona definida.
+    // Solo teletransporta si el paso de este frame entra o cruza una zona de entrada.
     public Vector2 ApplyWrapAreas(Vector2 previousPosition, Vector2 position)
     {
-        if (_wrapAreas == null) return position;
-
-        for (int i = 0; i < _wrapAreas.Length; i++)
+        foreach (WrapArea area in _wrapAreas)
         {
-            WrapArea area = _wrapAreas[i];
-            if (area == null) continue;
-
             Vector2 entryCenter = (Vector2)transform.position + area.EntryLocalCenter;
+            // Profundidad 1: el juego es 2D, Bounds solo necesita que no sea 0.
             Bounds entry = new Bounds(entryCenter,
                 new Vector3(area.EntrySize.x, area.EntrySize.y, 1f));
             Vector2 crossingPosition = position;
 
             if (!entry.Contains(position))
             {
+                // No terminó adentro: se revisa si el paso atravesó la zona.
                 Vector2 movement = position - previousPosition;
                 float distance = movement.magnitude;
-                if (distance < 0.0001f) continue;
+                if (distance < MinDistance) continue;
 
                 Vector2 direction = movement / distance;
                 Ray ray = new Ray(previousPosition, direction);
-                float hitDistance;
-                if (!entry.IntersectRay(ray, out hitDistance) ||
+                if (!entry.IntersectRay(ray, out float hitDistance) ||
                     hitDistance > distance)
                     continue;
                 crossingPosition = previousPosition + direction * hitDistance;
@@ -327,42 +400,11 @@ public class AIGameManager2D : MonoBehaviour
         return position;
     }
 
+    // --- Editor ---
+
     void OnValidate()
     {
-        if (_wrapAreas == null) return;
-        for (int i = 0; i < _wrapAreas.Length; i++)
-            if (_wrapAreas[i] != null) _wrapAreas[i].ClampSize();
-    }
-
-    public void FoodConsumed(FoodPickup2D item)
-    {
-        if (!_running || _finished || item == null || _roles == null) return;
-        _roles.AddFood(item.FoodUnits);
-    }
-
-    public void BoidCaught()
-    {
-        if (!_running || _finished) return;
-        for (int i = 0; i < _boids.Count; i++)
-            if (_boids[i] != null && _boids[i].IsAlive) return;
-        Finish(MatchSide.Ghosts);
-    }
-
-    public void GhostCaught()
-    {
-        if (!_running || _finished) return;
-        for (int i = 0; i < _hunters.Count; i++)
-            if (_hunters[i] != null && _hunters[i].IsAlive) return;
-        Finish(MatchSide.Pacman);
-    }
-
-    void Finish(MatchSide winner)
-    {
-        _running = false;
-        _finished = true;
-        _winner = winner;
-        Debug.Log("Ganó " + (winner == MatchSide.Pacman ? "Pacman" : "Fantasmas"), this);
-        MatchFinished?.Invoke(winner);
+        foreach (WrapArea area in _wrapAreas) area.ClampSize();
     }
 
     void OnDrawGizmosSelected()
@@ -370,11 +412,8 @@ public class AIGameManager2D : MonoBehaviour
         Gizmos.color = Color.white;
         Gizmos.DrawWireCube(transform.position, _arenaSize);
 
-        if (_wrapAreas == null) return;
-        for (int i = 0; i < _wrapAreas.Length; i++)
+        foreach (WrapArea area in _wrapAreas)
         {
-            WrapArea area = _wrapAreas[i];
-            if (area == null) continue;
             Vector2 entry = (Vector2)transform.position + area.EntryLocalCenter;
             Vector2 exit = (Vector2)transform.position + area.ExitLocalPosition;
             Gizmos.color = Color.magenta;

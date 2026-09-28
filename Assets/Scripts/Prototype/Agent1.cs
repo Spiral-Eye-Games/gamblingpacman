@@ -9,6 +9,6 @@ public class Agent1 : Steering
     // Update is called once per frame
     void Update()
     {
-        AddForce(Pursuit(_target));
+        //AddForce(Pursuit(_target));
     }
 }

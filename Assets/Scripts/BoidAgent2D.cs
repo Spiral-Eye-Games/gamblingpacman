@@ -12,6 +12,7 @@ public class BoidAgent2D : MonoBehaviour
     [Header("Percepción y comida")]
     [SerializeField, Min(0.1f)] float _foodSenseRadius = 8f;
     [SerializeField, Min(0.1f)] float _hunterSenseRadius = 5f;
+    [SerializeField, Min(0.1f)] float _huntSenseRadius = 20f; // al cazar, ve a todo el mapa
     [SerializeField, Min(0.01f)] float _pickupRadius = 0.35f;
 
     [Header("Flocking")]
@@ -41,6 +42,7 @@ public class BoidAgent2D : MonoBehaviour
     HunterFSM2D _ghostTarget;
     float _wanderAngle;
     bool _alive = true;
+    bool _wasHunter;
 
     public Steering Motor => _motor;
     public float CaptureRadius => _pickupRadius;
@@ -102,6 +104,14 @@ public class BoidAgent2D : MonoBehaviour
             return;
         }
 
+        // Al cambiar de rol se corta la inercia para no seguir con el movimiento anterior.
+        bool hunting = PacmanIsHunter;
+        if (hunting != _wasHunter)
+        {
+            _wasHunter = hunting;
+            _motor.Stop();
+        }
+
         Perceive();
         _rootNode.Execute(this);
     }
@@ -155,10 +165,16 @@ public class BoidAgent2D : MonoBehaviour
     void Perceive()
     {
         _foodTarget = _manager.FindNearestFood(_motor.Position, _foodSenseRadius);
-        _visibleHunter = _manager.FindNearestHunter(_motor.Position,
-            _hunterSenseRadius);
-        _ghostTarget = _manager.FindNearestHunter(_motor.Position,
-            _hunterSenseRadius);
+        if (PacmanIsHunter)
+        {
+            _visibleHunter = null; // el cazador no huye
+            _ghostTarget = _manager.FindNearestHunter(_motor.Position, _huntSenseRadius);
+        }
+        else
+        {
+            _visibleHunter = _manager.FindNearestHunter(_motor.Position, _hunterSenseRadius);
+            _ghostTarget = null;
+        }
 
         _neighbors.Clear();
         List<BoidAgent2D> all = _manager.Boids;

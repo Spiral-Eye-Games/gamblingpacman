@@ -7,7 +7,7 @@ public class Agent2 : Steering
     // Update is called once per frame
     void Update()
     {
-        AddForce(Flee(_target.position));
-        Move();
+        //AddForce(Flee(_target.position));
+        //Move();
     }
 }

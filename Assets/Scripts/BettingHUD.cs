@@ -31,6 +31,7 @@ public class BettingHUD : MonoBehaviour
     [SerializeField] Button _tailsButton;
     [SerializeField] Button _startButton;
     [SerializeField] Button _nextRoundButton;
+    [SerializeField] Button _retryButton; // aparece al ganar o perder el juego
 
     [Header("Grupos de la interfaz")]
     [SerializeField] GameObject _betEntryGroup;
@@ -67,6 +68,7 @@ public class BettingHUD : MonoBehaviour
         _tailsButton.onClick.AddListener(ChooseTails);
         _startButton.onClick.AddListener(StartRound);
         _nextRoundButton.onClick.AddListener(NextRound);
+        if (_retryButton != null) _retryButton.onClick.AddListener(Retry);
         Refresh();
     }
 
@@ -78,6 +80,7 @@ public class BettingHUD : MonoBehaviour
         if (_tailsButton != null) _tailsButton.onClick.RemoveListener(ChooseTails);
         if (_startButton != null) _startButton.onClick.RemoveListener(StartRound);
         if (_nextRoundButton != null) _nextRoundButton.onClick.RemoveListener(NextRound);
+        if (_retryButton != null) _retryButton.onClick.RemoveListener(Retry);
     }
 
     void Update()
@@ -118,6 +121,8 @@ public class BettingHUD : MonoBehaviour
         SetActive(_beforeRoundGroup, beforeRound);
         SetActive(_runningGroup, _betting.IsRunning);
         SetActive(_finishedGroup, _betting.MatchFinished);
+        if (_retryButton != null)
+            SetActive(_retryButton.gameObject, _betting.GoalReached || _betting.Bankrupt);
 
         if (beforeRound)
         {
@@ -161,6 +166,7 @@ public class BettingHUD : MonoBehaviour
         if (target != null && target.activeSelf != value) target.SetActive(value);
     }
 
+    void Retry() { _betting.Retry(); }
     void BetPacman() { PlaceBet(MatchSide.Pacman); }
     void BetGhosts() { PlaceBet(MatchSide.Ghosts); }
     void ChooseHeads() { Flip(true); }

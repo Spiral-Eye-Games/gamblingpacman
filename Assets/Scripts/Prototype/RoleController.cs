@@ -41,7 +41,7 @@ public class RoleController : MonoBehaviour
             ? _steering.Seek(_target.position)
             : _steering.Flee(_target.position);
 
-        _steering.AddForce(force);
+        //_steering.AddForce(force);
     }
 
     public void SwapRole()

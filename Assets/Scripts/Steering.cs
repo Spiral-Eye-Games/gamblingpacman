@@ -1,21 +1,16 @@
 using UnityEngine;
 
-//Motor cinemático compartido por hunter/boids y los fantasmas
-//No usa rigidbody2d
+// Motor cinemático de Pacman. No usa Rigidbody2D.
 [DisallowMultipleComponent]
-public class Steering : MonoBehaviour
+public class Steering : MonoBehaviour, IAgentMotor
 {
-    const float MinSpeedSqr = 0.0001f;   //prácticamente detenido
-    const float MinDistance = 0.001f;    //prácticamente en el mismo punto
-    const float WallSkin = 0.01f;        //margen para no rozar la pared
-    const int WallSlidePasses = 2;       //1 pasada frena, la 2da desliza
-
-    const int AvoidDirections = 8;       //prueba una vuelta completa en pasos de 45 grados
-
-    const float AvoidCommitSeconds = 0.6f; //evita cambiar de lado en cada frame
-
+    const float MinSpeedSqr = 0.0001f;
+    const float MinDistance = 0.001f;
+    const float WallSkin = 0.01f;
+    const int WallSlidePasses = 2;
+    const int AvoidDirections = 8;
+    const float AvoidCommitSeconds = 0.6f;
     const float StuckSeconds = 0.3f;
-
     const int OverlapRepairPasses = 6;
 
     [SerializeField, Min(0.01f)] float _maxSpeed = 5f;
@@ -25,9 +20,6 @@ public class Steering : MonoBehaviour
     [SerializeField] float _spriteAngleOffset;
 
     Vector2 _velocity;
-    Vector2 _pendingSteering;
-    bool _hasPendingSteering;
-
     float _boostMultiplier = 1f;
     float _boostUntil;
 
@@ -77,18 +69,17 @@ public class Steering : MonoBehaviour
         float distance = offset.magnitude;
         if (distance < MinDistance) return -_velocity;
 
-        //recortamos el resultado del vector al maxspeed, la fuerza nunca seria mayor que maxspeed
         float speed = MaxSpeed * Mathf.Min(1f, distance / _arrivalRadius);
         return offset / distance * speed - _velocity;
     }
 
-    public Vector2 Pursuit(Steering target, float predictionSeconds = 1f)
+    public Vector2 Pursuit(IAgentMotor target, float predictionSeconds = 1f)
     {
         if (target == null) return Vector2.zero;
         return Seek(target.Position + target.Velocity * predictionSeconds);
     }
 
-    public Vector2 Evade(Steering threat, float predictionSeconds = 1f)
+    public Vector2 Evade(IAgentMotor threat, float predictionSeconds = 1f)
     {
         if (threat == null) return Vector2.zero;
         return Flee(threat.Position + threat.Velocity * predictionSeconds);
@@ -102,7 +93,7 @@ public class Steering : MonoBehaviour
         return Seek(circleCenter + offset);
     }
 
-    // Busca una salida libre alrededor del agente cuando su movimiento choca con una pared.
+    // Busca una salida libre cuando el movimiento choca con una pared.
     // El LayerMask debe contener SOLO paredes.
     public Vector2 AvoidObstacles(LayerMask walls, float bodyRadius, float lookAhead,
         Vector2 steering)
@@ -157,7 +148,6 @@ public class Steering : MonoBehaviour
             bestDirection = candidate;
         }
 
-        // Si ya está rozando dos paredes, la normal del choque indica cómo salir.
         if (bestClearance < WallSkin * 2f && forwardHit.normal.sqrMagnitude > MinSpeedSqr)
             bestDirection = forwardHit.normal;
 
@@ -178,7 +168,6 @@ public class Steering : MonoBehaviour
         _velocity = Vector2.ClampMagnitude(_velocity + deltaVelocity, MaxSpeed);
         Vector2 intendedMovement = _velocity * dt;
 
-        // Sin Rigidbody2D: el cast de MoveWithWalls es lo que impide atravesar paredes.
         Vector2 movement = MoveWithWalls(intendedMovement);
         _velocity = Vector2.ClampMagnitude(movement / dt, MaxSpeed);
 
@@ -217,8 +206,6 @@ public class Steering : MonoBehaviour
     {
         _velocity = Vector2.zero;
         FrameStartPosition = Position;
-        _pendingSteering = Vector2.zero;
-        _hasPendingSteering = false;
         _avoidDirection = Vector2.zero;
         _avoidUntil = 0f;
         _blockedSeconds = 0f;
@@ -229,10 +216,10 @@ public class Steering : MonoBehaviour
         FrameStartPosition = Position;
     }
 
-    // Separa dos agentes que se solapan, sin Rigidbody2D.
+    // Separa dos agentes que se solapan.
     public void PushOut(Vector2 displacement)
     {
-        MoveWithWalls(displacement); // tampoco debe empujar hacia una pared
+        MoveWithWalls(displacement);
         if (displacement.sqrMagnitude < MinSpeedSqr) return;
 
         Vector2 direction = displacement.normalized;
@@ -240,7 +227,7 @@ public class Steering : MonoBehaviour
         if (inwardSpeed < 0f) _velocity -= direction * inwardSpeed;
     }
 
-    // Mueve el objeto frenando o deslizando contra las paredes detectadas.
+    // Mueve el objeto frenando o deslizando contra las paredes.
     Vector2 MoveWithWalls(Vector2 displacement)
     {
         Vector2 start = Position;
@@ -280,8 +267,7 @@ public class Steering : MonoBehaviour
         return position - start;
     }
 
-    // Si el círculo empezó ligeramente dentro de una pared, un CircleCast normal
-    // informa choque a distancia cero en todas las direcciones y no puede salir.
+    // Si el círculo empezó dentro de una pared, lo saca antes de moverlo.
     Vector2 RepairWallOverlap(Vector2 position)
     {
         if (_collisionWalls.value == 0) return position;
@@ -321,30 +307,10 @@ public class Steering : MonoBehaviour
         return position;
     }
 
-    // Boost temporal comprado con la moneda de la apuesta. Se apaga solo al vencer el tiempo.
+    // Boost temporal de la moneda. Se apaga solo al vencer el tiempo.
     public void BoostSpeed(float multiplier, float seconds)
     {
         _boostMultiplier = Mathf.Max(1f, multiplier);
         _boostUntil = Time.time + Mathf.Max(0f, seconds);
-    }
-
-    //Compatibilidad con el estilo de las pruebas iniciales (Seek + AddForce).
-    public void AddForce(Vector2 steering)
-    {
-        _pendingSteering += steering;
-        _hasPendingSteering = true;
-    }
-
-    public void Move()
-    {
-        Vector2 steering = _pendingSteering;
-        _pendingSteering = Vector2.zero;
-        _hasPendingSteering = false;
-        Move(steering);
-    }
-
-    protected virtual void LateUpdate()
-    {
-        if (_hasPendingSteering) Move();
     }
 }

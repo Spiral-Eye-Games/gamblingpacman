@@ -3,7 +3,7 @@ using UnityEngine;
 // FSM del fantasma: Rest, Patrol, Hunting y Fleeing.
 // Misma lógica que la versión con patrón State, pero como switch simple:
 // para 4 estados no hace falta una clase por estado.
-[RequireComponent(typeof(Steering))]
+[RequireComponent(typeof(SteeringGhost))]
 [DisallowMultipleComponent]
 public class HunterFSM2D : MonoBehaviour
 {
@@ -38,7 +38,7 @@ public class HunterFSM2D : MonoBehaviour
     [Header("Colisión con fantasmas")]
     [SerializeField, Min(0.01f)] float _teamCollisionRadius = 0.45f;
 
-    Steering _motor;
+    SteeringGhost _motor;
     BoidAgent2D _target;
     int _waypointIndex;
     float _wanderAngle;
@@ -46,7 +46,7 @@ public class HunterFSM2D : MonoBehaviour
     bool _stateStarted;
     bool _alive = true;
 
-    public Steering Motor => _motor;
+    public SteeringGhost Motor => _motor;
     public float CaptureRadius => _catchRadius;
     public float TeamCollisionRadius => _teamCollisionRadius;
     public bool IsAlive => _alive && isActiveAndEnabled;
@@ -55,7 +55,7 @@ public class HunterFSM2D : MonoBehaviour
 
     void Awake()
     {
-        _motor = GetComponent<Steering>();
+        _motor = GetComponent<SteeringGhost>();
         _motor.ConfigureWallCollision(_walls, _bodyRadius);
         Energy = _maximumEnergy;
         _wanderAngle = Random.Range(-Mathf.PI, Mathf.PI);

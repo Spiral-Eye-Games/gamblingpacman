@@ -120,6 +120,14 @@ public class BettingManager : MonoBehaviour
         return true;
     }
 
+    // Al ganar (meta) o perder (sin dinero): vuelve a empezar desde el saldo inicial.
+    public bool Retry()
+    {
+        if (!GoalReached && !Bankrupt) return false;
+        Balance = _startingBalance;
+        return NextRound();
+    }
+
     public static string SideName(MatchSide side)
     {
         return side == MatchSide.Pacman ? "Pacman" : "Fantasmas";
