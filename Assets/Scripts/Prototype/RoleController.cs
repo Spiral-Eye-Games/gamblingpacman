@@ -11,7 +11,7 @@ public class RoleController : MonoBehaviour
     [SerializeField] Steering _steering;
     [SerializeField] Transform _target;
     [SerializeField] Role _startingRole = Role.Prey;
-    [SerializeField] float _roleDuration = 8f; // segundos antes de invertir, ajustable
+    [SerializeField] float _roleDuration = 4f; // segundos antes de invertir, ajustable
     [SerializeField] bool _autoSwapRoles = true;
 
     Role _currentRole;

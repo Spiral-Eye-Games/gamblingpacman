@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9d92fb09e379c4292329ac196b11f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxSpeed: 5
+  _maxSpeed: 3
   _maxForce: 10
   _arrivalRadius: 1.5
   _faceVelocity: 1
@@ -119,10 +119,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _manager: {fileID: 0}
-  _foodSenseRadius: 8
-  _hunterSenseRadius: 5
+  _foodSenseRadius: 3.11
+  _hunterSenseRadius: 5.5
   _pickupRadius: 0.35
-  _neighborRadius: 3
+  _neighborRadius: 0.69
   _separationRadius: 0.8
   _separationWeight: 1.7
   _alignmentWeight: 0.8

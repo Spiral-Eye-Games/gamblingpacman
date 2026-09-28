@@ -1,7 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-// FSM del fantasma: conserva Rest, Patrol y Hunting del TP y agrega Fleeing.
+// FSM del fantasma: Rest, Patrol, Hunting y Fleeing.
+// Misma lógica que la versión con patrón State, pero como switch simple:
+// para 4 estados no hace falta una clase por estado.
 [RequireComponent(typeof(Steering))]
 [DisallowMultipleComponent]
 public class HunterFSM2D : MonoBehaviour
@@ -29,15 +30,20 @@ public class HunterFSM2D : MonoBehaviour
     [SerializeField, Min(0.01f)] float _bodyRadius = 0.3f;
     [SerializeField, Min(0.01f)] float _wallLookAhead = 1.2f;
 
+    [Header("Paseo sin objetivo")]
+    [SerializeField, Min(0.01f)] float _wanderAhead = 1.5f;
+    [SerializeField, Min(0.01f)] float _wanderRadius = 1f;
+    [SerializeField, Min(0f)] float _wanderJitter = 2f;
+
     [Header("Colisión con fantasmas")]
     [SerializeField, Min(0.01f)] float _teamCollisionRadius = 0.45f;
 
     Steering _motor;
-    readonly Dictionary<HunterState, State> _states = new Dictionary<HunterState, State>();
-    State _state;
     BoidAgent2D _target;
     int _waypointIndex;
     float _wanderAngle;
+    float _restElapsed;
+    bool _stateStarted;
     bool _alive = true;
 
     public Steering Motor => _motor;
@@ -52,10 +58,6 @@ public class HunterFSM2D : MonoBehaviour
         _motor.ConfigureWallCollision(_walls, _bodyRadius);
         Energy = _maximumEnergy;
         _wanderAngle = Random.Range(-Mathf.PI, Mathf.PI);
-        _states.Add(HunterState.Rest, new RestState(this));
-        _states.Add(HunterState.Patrol, new PatrolState(this));
-        _states.Add(HunterState.Hunting, new HuntingState(this));
-        _states.Add(HunterState.Fleeing, new FleeingState(this));
     }
 
     void Start()
@@ -72,6 +74,11 @@ public class HunterFSM2D : MonoBehaviour
         ChangeState(HunterState.Patrol);
     }
 
+    void OnDisable()
+    {
+        if (_motor != null) _motor.Stop();
+    }
+
     void Update()
     {
         if (_manager == null || !_manager.IsRunning || !_alive)
@@ -79,28 +86,132 @@ public class HunterFSM2D : MonoBehaviour
             _motor.Stop();
             return;
         }
-        _state?.OnUpdate();
-    }
 
-    void OnDisable()
-    {
-        if (_motor != null) _motor.Stop();
+        switch (CurrentState)
+        {
+            case HunterState.Rest: UpdateRest(); break;
+            case HunterState.Patrol: UpdatePatrol(); break;
+            case HunterState.Hunting: UpdateHunting(); break;
+            case HunterState.Fleeing: UpdateFleeing(); break;
+        }
     }
 
     void ChangeState(HunterState next)
     {
-        if (_state != null && CurrentState == next) return;
-        _state?.OnExit();
+        if (_stateStarted && CurrentState == next) return;
+        _stateStarted = true;
         CurrentState = next;
-        _state = _states[next];
-        _state.OnEnter();
+        if (next == HunterState.Rest)
+        {
+            _restElapsed = 0f;
+            _motor.Stop();
+        }
+    }
+
+    void UpdateRest()
+    {
+        _restElapsed += Time.deltaTime;
+        if (_restElapsed < _restTime) return;
+        Energy = _maximumEnergy;
+        ChangeState(_manager.Roles.PacmanIsHunter
+            ? HunterState.Fleeing : HunterState.Patrol);
+    }
+
+    void UpdatePatrol()
+    {
+        if (_manager.Roles.PacmanIsHunter)
+        {
+            ChangeState(HunterState.Fleeing);
+            return;
+        }
+
+        Energy = Mathf.Max(0f, Energy - _patrolEnergyPerSecond * Time.deltaTime);
+        if (Energy <= 0f)
+        {
+            ChangeState(HunterState.Rest);
+            return;
+        }
+
+        _target = FindVisibleBoid();
+        if (_target != null)
+        {
+            ChangeState(HunterState.Hunting);
+            return;
+        }
+
+        Vector2 steering;
+        if (_waypoints != null && _waypoints.Length > 0 &&
+            _waypoints[_waypointIndex] != null)
+        {
+            Vector2 point = _waypoints[_waypointIndex].position;
+            steering = _motor.Arrive(point);
+            if (Vector2.Distance(_motor.Position, point) <= _waypointRadius)
+                _waypointIndex = (_waypointIndex + 1) % _waypoints.Length;
+        }
+        else
+        {
+            steering = _motor.Wander(ref _wanderAngle,
+                _wanderAhead, _wanderRadius, _wanderJitter);
+        }
+
+        SafetyMove(steering);
+    }
+
+    void UpdateHunting()
+    {
+        if (_manager.Roles.PacmanIsHunter)
+        {
+            _target = null;
+            ChangeState(HunterState.Fleeing);
+            return;
+        }
+
+        Energy = Mathf.Max(0f, Energy - _huntingEnergyPerSecond * Time.deltaTime);
+        if (Energy <= 0f)
+        {
+            ChangeState(HunterState.Rest);
+            return;
+        }
+
+        if (!CanSee(_target))
+        {
+            _target = null;
+            ChangeState(HunterState.Patrol);
+            return;
+        }
+
+        SafetyMove(_motor.Pursuit(_target.Motor, _predictionTime));
+
+        if (Vector2.Distance(_motor.Position, _target.Motor.Position) <= _catchRadius)
+        {
+            _target.Caught();
+            _target = null;
+            ChangeState(HunterState.Patrol);
+        }
+    }
+
+    void UpdateFleeing()
+    {
+        Energy = Mathf.Max(0f, Energy - _huntingEnergyPerSecond * Time.deltaTime);
+        if (Energy <= 0f)
+        {
+            ChangeState(HunterState.Rest);
+            return;
+        }
+
+        BoidAgent2D pursuer = _manager.FindNearestBoid(_motor.Position, _viewRadius);
+        Vector2 steering = pursuer != null
+            ? _motor.Evade(pursuer.Motor, _predictionTime)
+            : _motor.Wander(ref _wanderAngle,
+                _wanderAhead, _wanderRadius, _wanderJitter);
+        SafetyMove(steering);
     }
 
     BoidAgent2D FindVisibleBoid()
     {
         BoidAgent2D closest = null;
         float bestDistance = _viewRadius;
-        List<BoidAgent2D> boids = _manager.Boids;
+        var boids = _manager.Boids;
 
         for (int i = 0; i < boids.Count; i++)
         {
@@ -117,9 +228,7 @@ public class HunterFSM2D : MonoBehaviour
     bool CanSee(BoidAgent2D boid)
     {
         if (boid == null || !boid.IsAlive) return false;
-        if (Vector2.Distance(_motor.Position, boid.Motor.Position)
-            > _viewRadius) return false;
-        return true;
+        return Vector2.Distance(_motor.Position, boid.Motor.Position) <= _viewRadius;
     }
 
     public void CaughtByPacman()
@@ -139,148 +248,6 @@ public class HunterFSM2D : MonoBehaviour
         Vector2 beforeMove = _motor.Position;
         _motor.Move(steering);
         transform.position = _manager.ApplyWrapAreas(beforeMove, transform.position);
-    }
-
-    abstract class State
-    {
-        protected readonly HunterFSM2D Hunter;
-        protected State(HunterFSM2D hunter) { Hunter = hunter; }
-        public virtual void OnEnter() { }
-        public abstract void OnUpdate();
-        public virtual void OnExit() { }
-    }
-
-    sealed class RestState : State
-    {
-        float _elapsed;
-        public RestState(HunterFSM2D hunter) : base(hunter) { }
-
-        public override void OnEnter()
-        {
-            _elapsed = 0f;
-            Hunter._motor.Stop();
-        }
-
-        public override void OnUpdate()
-        {
-            _elapsed += Time.deltaTime;
-            if (_elapsed < Hunter._restTime) return;
-            Hunter.Energy = Hunter._maximumEnergy;
-            Hunter.ChangeState(Hunter._manager.Roles.PacmanIsHunter
-                ? HunterState.Fleeing : HunterState.Patrol);
-        }
-    }
-
-    sealed class PatrolState : State
-    {
-        public PatrolState(HunterFSM2D hunter) : base(hunter) { }
-
-        public override void OnUpdate()
-        {
-            if (Hunter._manager.Roles.PacmanIsHunter)
-            {
-                Hunter.ChangeState(HunterState.Fleeing);
-                return;
-            }
-
-            Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
-                Hunter._patrolEnergyPerSecond * Time.deltaTime);
-            if (Hunter.Energy <= 0f)
-            {
-                Hunter.ChangeState(HunterState.Rest);
-                return;
-            }
-
-            Hunter._target = Hunter.FindVisibleBoid();
-            if (Hunter._target != null)
-            {
-                Hunter.ChangeState(HunterState.Hunting);
-                return;
-            }
-
-            Vector2 steering;
-            if (Hunter._waypoints != null && Hunter._waypoints.Length > 0 &&
-                Hunter._waypoints[Hunter._waypointIndex] != null)
-            {
-                Vector2 point = Hunter._waypoints[Hunter._waypointIndex].position;
-                steering = Hunter._motor.Arrive(point);
-                if (Vector2.Distance(Hunter._motor.Position, point)
-                    <= Hunter._waypointRadius)
-                    Hunter._waypointIndex = (Hunter._waypointIndex + 1)
-                        % Hunter._waypoints.Length;
-            }
-            else
-            {
-                steering = Hunter._motor.Wander(ref Hunter._wanderAngle,
-                    1.5f, 1f, 2f);
-            }
-
-            Hunter.SafetyMove(steering);
-        }
-    }
-
-    sealed class HuntingState : State
-    {
-        public HuntingState(HunterFSM2D hunter) : base(hunter) { }
-
-        public override void OnUpdate()
-        {
-            if (Hunter._manager.Roles.PacmanIsHunter)
-            {
-                Hunter._target = null;
-                Hunter.ChangeState(HunterState.Fleeing);
-                return;
-            }
-
-            Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
-                Hunter._huntingEnergyPerSecond * Time.deltaTime);
-            if (Hunter.Energy <= 0f)
-            {
-                Hunter.ChangeState(HunterState.Rest);
-                return;
-            }
-
-            if (!Hunter.CanSee(Hunter._target))
-            {
-                Hunter._target = null;
-                Hunter.ChangeState(HunterState.Patrol);
-                return;
-            }
-
-            Hunter.SafetyMove(Hunter._motor.Pursuit(
-                Hunter._target.Motor, Hunter._predictionTime));
-
-            if (Vector2.Distance(Hunter._motor.Position,
-                Hunter._target.Motor.Position) <= Hunter._catchRadius)
-            {
-                Hunter._target.Caught();
-                Hunter._target = null;
-                Hunter.ChangeState(HunterState.Patrol);
-            }
-        }
-    }
-
-    sealed class FleeingState : State
-    {
-        public FleeingState(HunterFSM2D hunter) : base(hunter) { }
-
-        public override void OnUpdate()
-        {
-            Hunter.Energy = Mathf.Max(0f, Hunter.Energy -
-                Hunter._huntingEnergyPerSecond * Time.deltaTime);
-            if (Hunter.Energy <= 0f)
-            {
-                Hunter.ChangeState(HunterState.Rest);
-                return;
-            }
-
-            BoidAgent2D pursuer = Hunter._manager.FindNearestBoid(
-                Hunter._motor.Position, float.MaxValue);
-            Vector2 steering = pursuer != null
-                ? Hunter._motor.Evade(pursuer.Motor, Hunter._predictionTime)
-                : Hunter._motor.Wander(ref Hunter._wanderAngle, 1.5f, 1f, 2f);
-            Hunter.SafetyMove(steering);
-        }
     }
 
     void OnDrawGizmosSelected()

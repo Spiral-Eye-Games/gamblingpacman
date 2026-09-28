@@ -161,7 +161,7 @@ public class BoidAgent2D : MonoBehaviour
         _visibleHunter = _manager.FindNearestHunter(_motor.Position,
             _hunterSenseRadius);
         _ghostTarget = _manager.FindNearestHunter(_motor.Position,
-            float.MaxValue);
+            _hunterSenseRadius);
 
         _neighbors.Clear();
         List<BoidAgent2D> all = _manager.Boids;
