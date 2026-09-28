@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// La recogida se decide por distancia desde el boid: no necesita Rigidbody2D.
+//La recogida se decide por distancia desde el boid, no necesita rigidbody2d
 public class FoodPickup2D : MonoBehaviour
 {
     [SerializeField, Min(1)] int _foodUnits = 1;

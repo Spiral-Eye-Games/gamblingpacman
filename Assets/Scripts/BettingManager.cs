@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Conserva el dinero entre rondas; una apuesta acertada gana su mismo monto.
+//Conserva el dinero entre rondas, una apuesta acertada gana su mismo monto
 public class BettingManager : MonoBehaviour
 {
     public static BettingManager Instance { get; private set; }
@@ -120,7 +120,7 @@ public class BettingManager : MonoBehaviour
         return true;
     }
 
-    // Al ganar (meta) o perder (sin dinero): vuelve a empezar desde el saldo inicial.
+    //Al ganar (meta) o perder (sin dinero), vuelve a empezar desde el saldo inicial
     public bool Retry()
     {
         if (!GoalReached && !Bankrupt) return false;

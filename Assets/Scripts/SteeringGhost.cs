@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Motor cinemático de los fantasmas. No usa Rigidbody2D.
+//Motor cinemático de los fantasmas, no usa Rigidbody2d
 [DisallowMultipleComponent]
 public class SteeringGhost : MonoBehaviour, IAgentMotor
 {
@@ -47,7 +47,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         FrameStartPosition = Position;
     }
 
-    // --- Comportamientos: cada uno devuelve el cambio de velocidad deseado ---
+    //--- Comportamientos: cada uno devuelve el cambio de velocidad deseado ---
 
     public Vector2 Seek(Vector2 target)
     {
@@ -93,8 +93,8 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         return Seek(circleCenter + offset);
     }
 
-    // Busca una salida libre cuando el movimiento choca con una pared.
-    // El LayerMask debe contener SOLO paredes.
+    //Busca una salida libre cuando el movimiento choca con una pared.
+    //El LayerMask debe contener SOLO paredes.
     public Vector2 AvoidObstacles(LayerMask walls, float bodyRadius, float lookAhead,
         Vector2 steering)
     {
@@ -156,7 +156,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         return _avoidDirection * MaxSpeed - _velocity;
     }
 
-    // --- Movimiento ---
+    //--- Movimiento ---
 
     public void Move(Vector2 steering)
     {
@@ -216,7 +216,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         FrameStartPosition = Position;
     }
 
-    // Separa dos agentes que se solapan.
+    //Separa dos agentes que se solapan.
     public void PushOut(Vector2 displacement)
     {
         MoveWithWalls(displacement);
@@ -227,7 +227,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         if (inwardSpeed < 0f) _velocity -= direction * inwardSpeed;
     }
 
-    // Mueve el objeto frenando o deslizando contra las paredes.
+    //Mueve el objeto frenando o deslizando contra las paredes.
     Vector2 MoveWithWalls(Vector2 displacement)
     {
         Vector2 start = Position;
@@ -267,7 +267,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         return position - start;
     }
 
-    // Si el círculo empezó dentro de una pared, lo saca antes de moverlo.
+    //Si el círculo empezó dentro de una pared, lo saca antes de moverlo
     Vector2 RepairWallOverlap(Vector2 position)
     {
         if (_collisionWalls.value == 0) return position;
@@ -288,7 +288,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
                 continue;
             }
 
-            // Centro dentro del collider: escoger la cara más cercana.
+            //Centro dentro del collider: escoger la cara más cercana
             Bounds bounds = wall.bounds;
             float left = position.x - bounds.min.x;
             float right = bounds.max.x - position.x;
@@ -307,7 +307,7 @@ public class SteeringGhost : MonoBehaviour, IAgentMotor
         return position;
     }
 
-    // Boost temporal de la moneda. Se apaga solo al vencer el tiempo.
+    //Boost temporal de la moneda, se apaga solo al vencer el tiempo
     public void BoostSpeed(float multiplier, float seconds)
     {
         _boostMultiplier = Mathf.Max(1f, multiplier);

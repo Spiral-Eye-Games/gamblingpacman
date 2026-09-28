@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Cuando Pacman come la comida necesaria, caza a los fantasmas durante _hunterDuration segundos.
+//Cuando Pacman come la comida necesaria, caza a los fantasmas durante _hunterDuration segundos
 public class RoleSwapManager : MonoBehaviour
 {
     [SerializeField, Min(1)] int _foodNeeded = 1;
@@ -11,7 +11,7 @@ public class RoleSwapManager : MonoBehaviour
     public int FoodNeeded => _foodNeeded;
     public int FoodEaten { get; private set; }
 
-    // Ya no hace falta un bool ni un Update: es cazador mientras no llegue _hunterUntil.
+    //Ya no hace falta un bool ni un Update, pakmanjiji es cazador mientras no llegue _hunterUntil
     public bool PacmanIsHunter => Time.time < _hunterUntil;
 
     public void AddFood(int units)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Copia los agentes de la escena y los coloca dentro de zonas configurables.
+//copia los agentes de la escena y los coloca dentro de zonas configurables
 public class TeamSpawner2D : MonoBehaviour
 {
     [SerializeField, Min(0)] int _extraBoids = 2;
@@ -28,7 +28,7 @@ public class TeamSpawner2D : MonoBehaviour
             return;
         }
 
-        // Incluir los agentes originales evita que las copias nazcan encima.
+        //incluir los agentes originales evita que las copias nazcan encima
         List<Vector2> occupied = new List<Vector2>();
         for (int i = 0; i < boids.Length; i++) occupied.Add(boids[i].transform.position);
         for (int i = 0; i < hunters.Length; i++) occupied.Add(hunters[i].transform.position);

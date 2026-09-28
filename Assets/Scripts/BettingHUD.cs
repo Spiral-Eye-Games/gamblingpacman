@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Actualiza y conecta los controles del Canvas. El diseño vive en la escena.
+//Actualiza y conecta los controles del Canvas
+//El diseño vive en la escena
 public class BettingHUD : MonoBehaviour
 {
     [Header("Sistemas")]

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-// FSM del fantasma: Rest, Patrol, Hunting y Fleeing.
-// Misma lógica que la versión con patrón State, pero como switch simple:
-// para 4 estados no hace falta una clase por estado.
+//FSM maquina de estados del fantasma rest, patrol, hunting y fleeing
+//Misma lógica que la versión con patrón State, pero como switch simple:
+//para 4 estados no hace falta una clase por estado.
 [RequireComponent(typeof(SteeringGhost))]
 [DisallowMultipleComponent]
 public class HunterFSM2D : MonoBehaviour

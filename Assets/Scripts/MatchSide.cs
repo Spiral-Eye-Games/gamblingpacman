@@ -1,4 +1,4 @@
-// Bandos de la apuesta: no cambian cuando se invierte quién persigue.
+//bandos de la apuesta, no cambian cuando se invierte quien persigue
 public enum MatchSide
 {
     Pacman,

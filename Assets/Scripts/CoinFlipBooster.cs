@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// La moneda se compra antes de comenzar la ronda y da un boost temporal.
+//La moneda se compra antes de comenzar la ronda y da un boost temporal
 public class CoinFlipBooster : MonoBehaviour
 {
     [SerializeField, Min(1)] int _cost = 100;

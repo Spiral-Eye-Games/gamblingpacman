@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Motor cinemático de Pacman. No usa Rigidbody2D.
+//motor cinemático de Pacman, no usa Rigidbody2D
 [DisallowMultipleComponent]
 public class Steering : MonoBehaviour, IAgentMotor
 {

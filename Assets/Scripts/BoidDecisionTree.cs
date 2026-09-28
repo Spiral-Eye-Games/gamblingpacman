@@ -1,4 +1,4 @@
-// Acciones posibles del árbol de decisión del TP.
+//Acciones posibles del árbol de decisión del tp
 public enum BoidAction
 {
     GoToFood,

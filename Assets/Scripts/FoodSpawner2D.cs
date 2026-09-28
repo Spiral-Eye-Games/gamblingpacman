@@ -1,17 +1,18 @@
 using UnityEngine;
 
-// Coloca comida en las zonas definidas: la inicial al arrancar y una nueva
-// cada _respawnSeconds mientras la ronda está en curso.
-// También se pueden colocar FoodPickup2D a mano en la escena.
+//coloca comida en las zonas definidas, la inicial al arrancar y una nueva
+//cada _respawnSeconds mientras la ronda esta en curso
+
+//también se pueden colocar foodpickup2d a mano en la escena
 public class FoodSpawner2D : MonoBehaviour
 {
     [System.Serializable]
     public class SpawnArea
     {
-        // Centro relativo a la posición del objeto que tiene FoodSpawner2D.
+        // Centro relativo a la posición del objeto que tiene foodspawner2d
         [SerializeField] Vector2 _localCenter;
         [SerializeField] Vector2 _size = new Vector2(6f, 2f);
-        [SerializeField, Min(0)] int _amount = 1; // comida inicial de esta zona
+        [SerializeField, Min(0)] int _amount = 1; //comida inicial de la zona
 
         public Vector2 LocalCenter => _localCenter;
         public Vector2 Size => _size;
@@ -31,7 +32,7 @@ public class FoodSpawner2D : MonoBehaviour
 
     [Header("Comida durante la ronda")]
     [SerializeField, Min(0.1f)] float _respawnSeconds = 6f;
-    [SerializeField, Min(1)] int _placementAttempts = 50; // intentos de buscar un lugar libre
+    [SerializeField, Min(1)] int _placementAttempts = 50; //intentos de buscar un lugar libre
 
     AIGameManager2D _manager;
     float _timer;
@@ -58,7 +59,7 @@ public class FoodSpawner2D : MonoBehaviour
         }
     }
 
-    // El timer solo avanza mientras la ronda está en curso.
+    //el timer solo avanza mientras la ronda está en curso.
     void Update()
     {
         if (_foodPrefab == null || _areas.Length == 0) return;
@@ -68,10 +69,10 @@ public class FoodSpawner2D : MonoBehaviour
         if (_timer < _respawnSeconds) return;
 
         _timer = 0f;
-        SpawnFood(_areas[Random.Range(0, _areas.Length)]); // una zona al azar
+        SpawnFood(_areas[Random.Range(0, _areas.Length)]); //una zona al azar
     }
 
-    // Busca un lugar libre dentro de la zona y pone una comida. false si no encontró lugar.
+    //busca un lugar libre dentro de la zona y pone una comida. false si no encontró lugar.
     bool SpawnFood(SpawnArea area)
     {
         for (int attempt = 0; attempt < _placementAttempts; attempt++)

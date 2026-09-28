@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Mantiene los participantes, resuelve las capturas y decide el ganador de cada ronda.
+//mantiene los participantes, resuelve las capturas y decide el ganador de cada ronda.
 public class AIGameManager2D : MonoBehaviour
 {
     public static AIGameManager2D Instance { get; private set; }
 
-    // Números técnicos con nombre, no son para ajustar el juego, por eso no van al inspector
-    const float MinDistance = 0.0001f;          // "es prácticamente el mismo punto"
-    const float MinRelativeMoveSqr = 0.000001f; // "los dos agentes se mueven igual"
-    const float TeleportMargin = 0.5f;          // tolerancia para distinguir un paso normal de un teletransporte
+    //variables  los numeros, no son para ajustar el juego, por eso no van al inspector
+    const float MinDistance = 0.0001f;          //es prácticamente el mismo punto
+    const float MinRelativeMoveSqr = 0.000001f; //los dos agentes se mueven igual
+    const float TeleportMargin = 0.5f;          //tolerancia para distinguir un paso normal de un teletransporte
 
-    // Zona de entrada que teletransporta a una salida (los túneles del mapa).
+    //Zona de entrada que teletransporta a una salida, modificable en el inspector
     [Serializable]
     public class WrapArea
     {
@@ -26,7 +26,7 @@ public class AIGameManager2D : MonoBehaviour
         public Vector2 EntrySize => _entrySize;
         public Vector2 ExitLocalPosition => _exitLocalPosition;
 
-        // Conserva en la salida el desplazamiento en X y/o Y con el que se entró.
+        //conserva en la salida el desplazamiento en X y/o Y con el que se entró.
         public Vector2 ExitOffset(Vector2 entryOffset)
         {
             return new Vector2(_keepX ? entryOffset.x : 0f,
@@ -93,7 +93,7 @@ public class AIGameManager2D : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    // --- Fin de cada frame: los agentes ya se movieron en su Update ---
+    //--- Fin de cada frame: los agentes ya se movieron en su Update ---
 
     void LateUpdate()
     {
@@ -142,7 +142,7 @@ public class AIGameManager2D : MonoBehaviour
     }
     
 
-    // Si dos compañeros se solapan, los aleja a mitad de camino cada uno.
+    //di dos compañeros se solapan, los aleja a mitad de camino cada uno.
     static void SeparateTeammates(IAgentMotor first, float firstRadius,
     IAgentMotor second, float secondRadius)
     {
@@ -158,7 +158,7 @@ public class AIGameManager2D : MonoBehaviour
         second.PushOut(-correction);
     }
 
-    // La captura depende del bando cazador, aunque el fantasma esté descansando.
+    //La captura depende del bando cazador, aunque el fantasma esté descansando.
     void ResolveCaptures()
     {
         if (_roles == null || !_running) return;
@@ -183,18 +183,18 @@ public class AIGameManager2D : MonoBehaviour
     }
 
     // ¿Se tocaron los dos agentes en algún momento de este frame?
-    // Además del punto final, se revisa la trayectoria: así también cuenta
-    // un cruce rápido que no termina en solapamiento.
+    //ademas del punto final, se revisa la trayectoria: así también cuenta
+    //un cruce rápido que no termina en solapamiento
     static bool PathsTouch(IAgentMotor first, IAgentMotor second, float radius)
     {
         Vector2 firstEnd = first.Position;
         Vector2 secondEnd = second.Position;
         float radiusSqr = radius * radius;
 
-        // Caso simple: al final del frame ya se están tocando.
+        //Caso simple: al final del frame ya se están tocando.
         if ((firstEnd - secondEnd).sqrMagnitude <= radiusSqr) return true;
 
-        // Caso del cruce rápido: se busca el momento del frame en que estuvieron más cerca.
+        //Caso del cruce rápido: se busca el momento del frame en que estuvieron más cerca.
         Vector2 firstStart = FrameStart(first);
         Vector2 secondStart = FrameStart(second);
         Vector2 relativeStart = firstStart - secondStart;
@@ -208,8 +208,8 @@ public class AIGameManager2D : MonoBehaviour
         return (relativeStart + relativeMove * t).sqrMagnitude <= radiusSqr;
     }
 
-    // Punto donde el agente empezó el frame. Si se movió más de lo posible, fue un
-    // teletransporte (wraparound) y no una captura: se usa el punto final como inicio.
+    //Punto donde el agente empezó el frame. Si se movió más de lo posible, fue un
+    //teletransporte (wraparound) y no una captura: se usa el punto final como inicio.
     static Vector2 FrameStart(IAgentMotor agent)
     {
         Vector2 end = agent.Position;
@@ -246,14 +246,14 @@ public class AIGameManager2D : MonoBehaviour
         _roles.AddFood(item.FoodUnits);
     }
 
-    // Ganan los fantasmas cuando no queda ningún boid vivo.
+    //Ganan los fantasmas cuando no queda ningún boid vivo.
     public void BoidCaught()
     {
         if (!_running || _finished || AnyBoidAlive()) return;
         Finish(MatchSide.Ghosts);
     }
 
-    // Gana Pacman cuando no queda ningún fantasma vivo.
+    //Gana Pacman cuando no queda ningún fantasma vivo.
     public void GhostCaught()
     {
         if (!_running || _finished || AnyHunterAlive()) return;
@@ -283,7 +283,7 @@ public class AIGameManager2D : MonoBehaviour
         MatchFinished?.Invoke(winner);
     }
 
-    // --- Registro de participantes ---
+    //--- Registro de participantes ---
 
     public void RegisterBoid(BoidAgent2D boid)
     {
@@ -310,7 +310,7 @@ public class AIGameManager2D : MonoBehaviour
         _food.Remove(item);
     }
 
-    // --- Búsquedas: el más cercano dentro del radio, o null si no hay ---
+    //--- Búsquedas: el más cercano dentro del radio, o null si no hay ---
 
     public FoodPickup2D FindNearestFood(Vector2 position, float radius)
     {
@@ -367,7 +367,7 @@ public class AIGameManager2D : MonoBehaviour
                Mathf.Abs(offset.y) + margin <= half.y;
     }
 
-    // Solo teletransporta si el paso de este frame entra o cruza una zona de entrada.
+    //Solo teletransporta si el paso de este frame entra o cruza una zona de entrada.
     public Vector2 ApplyWrapAreas(Vector2 previousPosition, Vector2 position)
     {
         foreach (WrapArea area in _wrapAreas)
@@ -400,7 +400,7 @@ public class AIGameManager2D : MonoBehaviour
         return position;
     }
 
-    // --- Editor ---
+    //--- Editor ---
 
     void OnValidate()
     {
