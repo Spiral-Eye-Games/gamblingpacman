@@ -34,7 +34,6 @@ public class AIGameManager2D : MonoBehaviour
     }
 
     [SerializeField] HunterFSM2D _hunter;
-    [SerializeField] bool _showAssignmentInBuild = true;
     [Header("Zonas de wraparound")]
     [SerializeField] WrapArea[] _wrapAreas = new WrapArea[0];
     [Header("Guía visual de la arena")]
@@ -364,34 +363,6 @@ public class AIGameManager2D : MonoBehaviour
         _winner = winner;
         Debug.Log("Ganó " + (winner == MatchSide.Pacman ? "Pacman" : "Fantasmas"), this);
         MatchFinished?.Invoke(winner);
-    }
-
-    void OnGUI()
-    {
-        if (!_showAssignmentInBuild) return;
-
-        int livingBoids = 0;
-        int livingHunters = 0;
-        for (int i = 0; i < _boids.Count; i++)
-            if (_boids[i] != null && _boids[i].IsAlive) livingBoids++;
-        for (int i = 0; i < _hunters.Count; i++)
-            if (_hunters[i] != null && _hunters[i].IsAlive) livingHunters++;
-
-        string phase = _roles != null && _roles.PacmanIsHunter
-            ? "Pacman caza" : "Fantasmas cazan";
-        string state = _finished ? "Ganó " + _winner :
-            (_running ? "Ronda en curso" : "Esperando apuesta");
-        GUI.Box(new Rect(10, 10, 510, 165), "IA 1 - TP 1 | Pacman autónomo");
-        GUI.Label(new Rect(22, 38, 485, 24), state + " | " + phase);
-        GUI.Label(new Rect(22, 62, 485, 24),
-            "Comida: " + (_roles != null ? _roles.FoodEaten : 0) + "/" +
-            (_roles != null ? _roles.FoodNeeded : 0) +
-            "   Boids: " + livingBoids + "   Fantasmas: " + livingHunters);
-        GUIStyle text = new GUIStyle(GUI.skin.label) { wordWrap = true };
-        GUI.Label(new Rect(22, 90, 485, 72),
-            "Consigna: boids con separación, alineación y cohesión; árbol de " +
-            "decisión para comida/Arrive, cazador/Evade, grupo y Wander; " +
-            "cazador con FSM Rest, Patrol y Hunting/Pursuit.", text);
     }
 
     void OnDrawGizmosSelected()
