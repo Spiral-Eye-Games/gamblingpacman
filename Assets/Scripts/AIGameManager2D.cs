@@ -40,18 +40,17 @@ public class AIGameManager2D : MonoBehaviour
         }
     }
 
-    [Header("Separación entre compañeros")]
-    [SerializeField, Min(1)] int _separationPasses = 3;
-
     [Header("Zonas de wraparound")]
     [SerializeField] WrapArea[] _wrapAreas = new WrapArea[0];
 
     [Header("Arena")]
     [SerializeField] Vector2 _arenaSize = new Vector2(16f, 9f);
+    [SerializeField] Vector2[] _navigationNodes = Array.Empty<Vector2>();
 
     readonly List<BoidAgent2D> _boids = new List<BoidAgent2D>();
     readonly List<HunterFSM2D> _hunters = new List<HunterFSM2D>();
     readonly List<FoodPickup2D> _food = new List<FoodPickup2D>();
+    Vector2[] _worldNavigationNodes;
     RoleSwapManager _roles;
     bool _running;
     bool _finished;
@@ -61,7 +60,10 @@ public class AIGameManager2D : MonoBehaviour
 
     public List<BoidAgent2D> Boids => _boids;
     public List<HunterFSM2D> Hunters => _hunters;
+    public IReadOnlyList<FoodPickup2D> Food => _food;
     public RoleSwapManager Roles => _roles;
+    public Rect ArenaBounds => new Rect((Vector2)transform.position - _arenaSize * 0.5f, _arenaSize);
+    public IReadOnlyList<Vector2> NavigationNodes => _worldNavigationNodes;
     public bool IsRunning => _running;
     public bool IsFinished => _finished;
     public MatchSide Winner => _winner;
@@ -76,6 +78,9 @@ public class AIGameManager2D : MonoBehaviour
         }
         Instance = this;
         _roles = GetComponent<RoleSwapManager>();
+        _worldNavigationNodes = new Vector2[_navigationNodes.Length];
+        for (int i = 0; i < _navigationNodes.Length; i++)
+            _worldNavigationNodes[i] = (Vector2)transform.position + _navigationNodes[i];
     }
 
     void Start()
@@ -99,66 +104,11 @@ public class AIGameManager2D : MonoBehaviour
     {
         if (!_running) return;
 
-        for (int pass = 0; pass < _separationPasses; pass++)
-        {
-            SeparateBoids();
-            SeparateHunters();
-        }
-
         ResolveCaptures();
         MarkFrameEnd();
     }
 
-    void SeparateBoids()
-    {
-        for (int i = 0; i < _boids.Count; i++)
-        {
-            BoidAgent2D first = _boids[i];
-            if (first == null || !first.IsAlive) continue;
-            for (int j = i + 1; j < _boids.Count; j++)
-            {
-                BoidAgent2D second = _boids[j];
-                if (second == null || !second.IsAlive) continue;
-                SeparateTeammates(first.Motor, first.TeamCollisionRadius,
-                    second.Motor, second.TeamCollisionRadius);
-            }
-        }
-    }
-
-    void SeparateHunters()
-    {
-        for (int i = 0; i < _hunters.Count; i++)
-        {
-            HunterFSM2D first = _hunters[i];
-            if (first == null || !first.IsAlive) continue;
-            for (int j = i + 1; j < _hunters.Count; j++)
-            {
-                HunterFSM2D second = _hunters[j];
-                if (second == null || !second.IsAlive) continue;
-                SeparateTeammates(first.Motor, first.TeamCollisionRadius,
-                    second.Motor, second.TeamCollisionRadius);
-            }
-        }
-    }
-    
-
-    //di dos compañeros se solapan, los aleja a mitad de camino cada uno.
-    static void SeparateTeammates(IAgentMotor first, float firstRadius,
-    IAgentMotor second, float secondRadius)
-    {
-        Vector2 difference = first.Position - second.Position;
-        float distance = difference.magnitude;
-        float minimumDistance = firstRadius + secondRadius;
-        if (distance >= minimumDistance) return;
-
-        Vector2 direction = distance > MinDistance
-            ? difference / distance : Vector2.right;
-        Vector2 correction = direction * ((minimumDistance - distance) * 0.5f);
-        first.PushOut(correction);
-        second.PushOut(-correction);
-    }
-
-    //La captura depende del bando cazador, aunque el fantasma esté descansando.
+    // La captura depende del bando cazador.
     void ResolveCaptures()
     {
         if (_roles == null || !_running) return;
@@ -312,21 +262,6 @@ public class AIGameManager2D : MonoBehaviour
 
     //--- Búsquedas: el más cercano dentro del radio, o null si no hay ---
 
-    public FoodPickup2D FindNearestFood(Vector2 position, float radius)
-    {
-        FoodPickup2D nearest = null;
-        float bestDistance = radius;
-        foreach (FoodPickup2D item in _food)
-        {
-            if (item == null || !item.IsAvailable) continue;
-            float distance = Vector2.Distance(item.transform.position, position);
-            if (distance >= bestDistance) continue;
-            bestDistance = distance;
-            nearest = item;
-        }
-        return nearest;
-    }
-
     public HunterFSM2D FindNearestHunter(Vector2 position, float radius)
     {
         HunterFSM2D nearest = null;
@@ -411,6 +346,10 @@ public class AIGameManager2D : MonoBehaviour
     {
         Gizmos.color = Color.white;
         Gizmos.DrawWireCube(transform.position, _arenaSize);
+
+        Gizmos.color = Color.magenta;
+        foreach (Vector2 node in _navigationNodes)
+            Gizmos.DrawSphere((Vector2)transform.position + node, 0.06f);
 
         foreach (WrapArea area in _wrapAreas)
         {

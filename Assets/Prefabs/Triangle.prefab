@@ -102,8 +102,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxSpeed: 3
-  _maxForce: 10
-  _arrivalRadius: 1.5
   _faceVelocity: 1
   _spriteAngleOffset: 0
 --- !u!114 &2778265626172236626
@@ -120,20 +118,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _manager: {fileID: 0}
   _foodSenseRadius: 3.11
-  _hunterSenseRadius: 5.5
   _pickupRadius: 0.35
-  _neighborRadius: 0.69
-  _separationRadius: 0.8
-  _separationWeight: 1.7
-  _alignmentWeight: 0.8
-  _cohesionWeight: 0.6
-  _flockWhileSeekingWeight: 0.25
-  _teamCollisionRadius: 0.45
-  _wanderAhead: 1.5
-  _wanderRadius: 1
-  _wanderJitter: 2
   _walls:
     serializedVersion: 2
     m_Bits: 8
   _bodyRadius: 0.3
-  _wallLookAhead: 1.2

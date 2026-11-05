@@ -7,6 +7,7 @@ public interface IAgentMotor
     Vector2 FrameStartPosition {get;}
     Vector2 Velocity { get; }
     float MaxSpeed {get;}
-    void PushOut(Vector2 displacement);
+    bool MoveToWaypoint(Vector2 waypoint);
+    void Stop();
     void MarkFrameEnd();
 }

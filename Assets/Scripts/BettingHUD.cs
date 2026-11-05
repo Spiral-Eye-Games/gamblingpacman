@@ -109,7 +109,7 @@ public class BettingHUD : MonoBehaviour
         int food = _match.Roles != null ? _match.Roles.FoodEaten : 0;
         int needed = _match.Roles != null ? _match.Roles.FoodNeeded : 0;
         SetText(_countsText, "Comida: " + food + "/" + needed +
-            "    Boids: " + boids + "    Fantasmas: " + ghosts);
+            "    Pac-Man: " + boids + "    Fantasmas: " + ghosts);
 
         SetText(_balanceText, "Saldo: $" + _betting.Balance +
             " / Meta: $" + _betting.GoalBalance);

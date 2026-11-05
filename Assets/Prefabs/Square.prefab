@@ -102,8 +102,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxSpeed: 5
-  _maxForce: 10
-  _arrivalRadius: 1.5
   _faceVelocity: 1
   _spriteAngleOffset: 0
 --- !u!114 &6430442455265389251
@@ -125,20 +123,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  _maximumEnergy: 15
-  _restTime: 2
-  _patrolEnergyPerSecond: 1
-  _huntingEnergyPerSecond: 2
   _viewRadius: 3.59
   _catchRadius: 0.45
-  _waypointRadius: 0.35
-  _predictionTime: 1
   _walls:
     serializedVersion: 2
     m_Bits: 8
   _bodyRadius: 0.3
-  _wallLookAhead: 1.2
-  _wanderAhead: 1.5
-  _wanderRadius: 1
-  _wanderJitter: 2
-  _teamCollisionRadius: 0.45

@@ -1,0 +1,97 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public static class AStarPathfinding2D
+{
+    // El inicio y el destino se conectan a los nodos visibles para esta búsqueda.
+    public static bool TryFindPath(Rect arena, IReadOnlyList<Vector2> nodes,
+        Vector2 start, Vector2 destination, LayerMask walls, float radius, List<Vector2> path)
+    {
+        path.Clear();
+        if (!IsWalkable(start, arena, walls, radius) ||
+            !IsWalkable(destination, arena, walls, radius))
+            return false;
+
+        if (SegmentIsClear(start, destination, radius, walls))
+        {
+            path.Add(destination);
+            return true;
+        }
+
+        var frontier = new List<int>();
+        var costSoFar = new float[nodes.Count];
+        var cameFrom = new int[nodes.Count];
+        var walkable = new bool[nodes.Count];
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            costSoFar[i] = float.PositiveInfinity;
+            walkable[i] = IsWalkable(nodes[i], arena, walls, radius);
+            Visit(i, -1, start, 0f);
+        }
+
+        while (frontier.Count > 0)
+        {
+            int bestIndex = 0;
+            float bestPriority = float.PositiveInfinity;
+            for (int i = 0; i < frontier.Count; i++)
+            {
+                int node = frontier[i];
+                float priority = costSoFar[node] + Vector2.Distance(nodes[node], destination);
+                if (priority >= bestPriority) continue;
+                bestIndex = i;
+                bestPriority = priority;
+            }
+
+            int current = frontier[bestIndex];
+            frontier.RemoveAt(bestIndex);
+            Vector2 position = nodes[current];
+
+            // Si el destino es visible, la heurística es el costo real del último tramo.
+            if (SegmentIsClear(position, destination, radius, walls))
+            {
+                path.Add(destination);
+                for (int node = current; node >= 0; node = cameFrom[node])
+                {
+                    Vector2 point = nodes[node];
+                    if (!point.Equals(path[path.Count - 1]) && !point.Equals(start))
+                        path.Add(point);
+                }
+                path.Reverse();
+                return true;
+            }
+
+            for (int next = 0; next < nodes.Count; next++)
+                Visit(next, current, position, costSoFar[current]);
+        }
+
+        return false;
+
+        void Visit(int next, int parent, Vector2 from, float parentCost)
+        {
+            if (!walkable[next]) return;
+            Vector2 position = nodes[next];
+            float newCost = parentCost + Vector2.Distance(from, position);
+            if (newCost >= costSoFar[next] || !SegmentIsClear(from, position, radius, walls))
+                return;
+
+            costSoFar[next] = newCost;
+            cameFrom[next] = parent;
+            if (!frontier.Contains(next)) frontier.Add(next);
+        }
+    }
+
+    static bool IsWalkable(Vector2 point, Rect arena, LayerMask walls, float radius)
+    {
+        return point.x >= arena.xMin + radius && point.x <= arena.xMax - radius &&
+            point.y >= arena.yMin + radius && point.y <= arena.yMax - radius &&
+            Physics2D.OverlapCircle(point, radius, walls) == null;
+    }
+
+    internal static bool SegmentIsClear(Vector2 from, Vector2 to, float radius, LayerMask walls)
+    {
+        Vector2 offset = to - from;
+        float distance = offset.magnitude;
+        return distance == 0f || Physics2D.CircleCast(from, radius, offset / distance,
+            distance, walls).collider == null;
+    }
+}

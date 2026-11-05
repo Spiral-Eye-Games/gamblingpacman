@@ -81,6 +81,9 @@ public class FoodSpawner2D : MonoBehaviour
                 Random.Range(-area.Size.x * 0.5f, area.Size.x * 0.5f),
                 Random.Range(-area.Size.y * 0.5f, area.Size.y * 0.5f));
             Vector2 position = (Vector2)transform.position + area.LocalCenter + offset;
+            if (_manager != null && !_manager.IsInsideArena(position, _clearance))
+                continue;
+
             if (_walls.value != 0 &&
                 Physics2D.OverlapCircle(position, _clearance, _walls) != null)
                 continue;
