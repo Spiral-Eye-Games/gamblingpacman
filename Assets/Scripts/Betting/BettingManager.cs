@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//Conserva el dinero entre rondas, una apuesta acertada gana su mismo monto
+// Coordina las rondas de Unity con el modelo de apuestas.
 public class BettingManager : MonoBehaviour
 {
     public static BettingManager Instance { get; private set; }
@@ -11,19 +12,22 @@ public class BettingManager : MonoBehaviour
 
     AIGameManager2D _match;
     CoinFlipBooster _coin;
+    readonly BettingModel _model = new BettingModel(0);
 
-    public int Balance { get; private set; }
+    internal event Action StateChanged;
+
+    public int Balance => _model.Balance;
     public int GoalBalance => _goalBalance;
-    public int Stake { get; private set; }
-    public MatchSide BetSide { get; private set; }
-    public MatchSide LastWinner { get; private set; }
-    public bool HasBet { get; private set; }
-    public bool IsRunning { get; private set; }
-    public bool MatchFinished { get; private set; }
-    public bool GoalReached => MatchFinished && Balance >= _goalBalance;
-    public bool Bankrupt => MatchFinished && Balance == 0;
-    public bool CanBuyCoin => HasBet && !IsRunning && !MatchFinished &&
-        _coin != null && !_coin.HasFlipped && Balance - Stake >= _coin.Cost;
+    public int Stake => _model.Stake;
+    public MatchSide BetSide => _model.BetSide;
+    public MatchSide LastWinner => _model.LastWinner;
+    public bool HasBet => _model.HasBet;
+    public bool IsRunning => _model.IsRunning;
+    public bool MatchFinished => _model.IsFinished;
+    public bool GoalReached => _model.HasReachedGoal(_goalBalance);
+    public bool Bankrupt => _model.IsBankrupt;
+    public bool CanBuyCoin => _coin != null && !_coin.HasFlipped &&
+        _model.CanAffordCoin(_coin.Cost);
 
     void Awake()
     {
@@ -34,7 +38,7 @@ public class BettingManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Balance = _startingBalance;
+        _model.RestoreBalance(_startingBalance);
         _coin = GetComponent<CoinFlipBooster>();
     }
 
@@ -54,33 +58,35 @@ public class BettingManager : MonoBehaviour
 
     public bool TryPlaceBet(MatchSide side, int amount, out string message)
     {
-        if (HasBet || IsRunning || MatchFinished || _match == null)
+        BettingModel.BetResult result = _match == null
+            ? BettingModel.BetResult.Closed : _model.PlaceBet(side, amount);
+        if (result == BettingModel.BetResult.Closed)
         {
             message = "La apuesta de esta ronda ya está cerrada.";
             return false;
         }
-        if (amount < 1 || amount > Balance)
+        if (result == BettingModel.BetResult.InvalidAmount)
         {
             message = "Apostá entre $1 y tu saldo disponible.";
             return false;
         }
-        BetSide = side;
-        Stake = amount;
-        HasBet = true;
-        message = "Apuesta de $" + amount + " a " + SideName(side) + ".";
+
+        message = "Apuesta de $" + amount + " a " + side.DisplayName() + ".";
+        StateChanged?.Invoke();
         return true;
     }
 
     public bool TryChargeCoin(int cost)
     {
         if (!CanBuyCoin || cost != _coin.Cost) return false;
-        Balance -= cost;
+        _model.ChargeCoin(cost);
+        StateChanged?.Invoke();
         return true;
     }
 
     public bool TryStartRound(out string message)
     {
-        if (!HasBet || IsRunning || MatchFinished || _match == null)
+        if (!_model.CanStart || _match == null)
         {
             message = "Primero confirmá una apuesta.";
             return false;
@@ -90,20 +96,18 @@ public class BettingManager : MonoBehaviour
             message = "Faltan agentes o RoleSwapManager en la escena.";
             return false;
         }
-        IsRunning = true;
+        _model.BeginRound();
         if (_coin != null) _coin.ApplyBoost(_match);
         message = "Ronda iniciada.";
+        StateChanged?.Invoke();
         return true;
     }
 
     void OnMatchFinished(MatchSide winner)
     {
-        if (!IsRunning || MatchFinished) return;
-        IsRunning = false;
-        MatchFinished = true;
-        LastWinner = winner;
-        Balance += winner == BetSide ? Stake : -Stake;
-        Debug.Log("Ganó " + SideName(winner) + ". Saldo: $" + Balance, this);
+        if (!_model.TryFinishRound(winner)) return;
+        Debug.Log("Ganó " + winner.DisplayName() + ". Saldo: $" + Balance, this);
+        StateChanged?.Invoke();
     }
 
     public bool NextRound()
@@ -111,11 +115,9 @@ public class BettingManager : MonoBehaviour
         if (!MatchFinished || GoalReached || Bankrupt) return false;
         if (_match != null) _match.MatchFinished -= OnMatchFinished;
         _match = null;
-        HasBet = false;
-        IsRunning = false;
-        MatchFinished = false;
-        Stake = 0;
+        _model.ResetRound();
         if (_coin != null) _coin.ResetForNewRound();
+        StateChanged?.Invoke();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         return true;
     }
@@ -124,12 +126,11 @@ public class BettingManager : MonoBehaviour
     public bool Retry()
     {
         if (!GoalReached && !Bankrupt) return false;
-        Balance = _startingBalance;
-        return NextRound();
+        _model.RestoreBalance(_startingBalance);
+        if (NextRound()) return true;
+        StateChanged?.Invoke();
+        return false;
     }
 
-    public static string SideName(MatchSide side)
-    {
-        return side == MatchSide.Pacman ? "Pacman" : "Fantasmas";
-    }
+    public static string SideName(MatchSide side) => side.DisplayName();
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 // Motor cinemático compartido por Pac-Man y los fantasmas.
 [DisallowMultipleComponent]
-public class Steering : MonoBehaviour, IAgentMotor
+public class Steering : MonoBehaviour, IAgentMotor, IMovementTrace2D
 {
     [SerializeField, Min(0.01f)] float _maxSpeed = 5f;
     [SerializeField] bool _faceVelocity = true;

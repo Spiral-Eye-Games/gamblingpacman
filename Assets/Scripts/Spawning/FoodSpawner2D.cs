@@ -1,9 +1,6 @@
 using UnityEngine;
 
-//coloca comida en las zonas definidas, la inicial al arrancar y una nueva
-//cada _respawnSeconds mientras la ronda esta en curso
-
-//también se pueden colocar foodpickup2d a mano en la escena
+// Coloca comida inicial y genera otra a intervalos durante la ronda.
 public class FoodSpawner2D : MonoBehaviour
 {
     [System.Serializable]
@@ -75,23 +72,12 @@ public class FoodSpawner2D : MonoBehaviour
     //busca un lugar libre dentro de la zona y pone una comida. false si no encontró lugar.
     bool SpawnFood(SpawnArea area)
     {
-        for (int attempt = 0; attempt < _placementAttempts; attempt++)
-        {
-            Vector2 offset = new Vector2(
-                Random.Range(-area.Size.x * 0.5f, area.Size.x * 0.5f),
-                Random.Range(-area.Size.y * 0.5f, area.Size.y * 0.5f));
-            Vector2 position = (Vector2)transform.position + area.LocalCenter + offset;
-            if (_manager != null && !_manager.IsInsideArena(position, _clearance))
-                continue;
+        var placement = new SpawnPlacement2D(_manager, _walls, _clearance, _placementAttempts);
+        Vector2 center = (Vector2)transform.position + area.LocalCenter;
+        if (!placement.TryFindPosition(center, area.Size, out Vector2 position)) return false;
 
-            if (_walls.value != 0 &&
-                Physics2D.OverlapCircle(position, _clearance, _walls) != null)
-                continue;
-
-            Instantiate(_foodPrefab, position, Quaternion.identity, transform);
-            return true;
-        }
-        return false;
+        Instantiate(_foodPrefab, position, Quaternion.identity, transform);
+        return true;
     }
 
     void OnValidate()

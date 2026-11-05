@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-//Actualiza y conecta los controles del Canvas
-//El diseño vive en la escena
+// Vista del Canvas. Traduce los controles a acciones del sistema de apuestas.
 public class BettingHUD : MonoBehaviour
 {
     [Header("Sistemas")]
@@ -42,6 +41,7 @@ public class BettingHUD : MonoBehaviour
     [SerializeField] GameObject _finishedGroup;
 
     string _message = "Elegí un monto y un bando.";
+    bool _initialized;
 
     void Start()
     {
@@ -63,6 +63,17 @@ public class BettingHUD : MonoBehaviour
         _amountInput.contentType = InputField.ContentType.IntegerNumber;
         _amountInput.characterLimit = 8;
         if (string.IsNullOrEmpty(_amountInput.text)) _amountInput.text = "100";
+        _initialized = true;
+        Connect();
+    }
+
+    void OnEnable()
+    {
+        if (_initialized) Connect();
+    }
+
+    void Connect()
+    {
         _betPacmanButton.onClick.AddListener(BetPacman);
         _betGhostsButton.onClick.AddListener(BetGhosts);
         _headsButton.onClick.AddListener(ChooseHeads);
@@ -70,11 +81,15 @@ public class BettingHUD : MonoBehaviour
         _startButton.onClick.AddListener(StartRound);
         _nextRoundButton.onClick.AddListener(NextRound);
         if (_retryButton != null) _retryButton.onClick.AddListener(Retry);
+        if (_betting != null) _betting.StateChanged += Refresh;
+        if (_coin != null) _coin.Changed += RefreshBetting;
         Refresh();
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
+        if (!_initialized) return;
+
         if (_betPacmanButton != null) _betPacmanButton.onClick.RemoveListener(BetPacman);
         if (_betGhostsButton != null) _betGhostsButton.onClick.RemoveListener(BetGhosts);
         if (_headsButton != null) _headsButton.onClick.RemoveListener(ChooseHeads);
@@ -82,19 +97,28 @@ public class BettingHUD : MonoBehaviour
         if (_startButton != null) _startButton.onClick.RemoveListener(StartRound);
         if (_nextRoundButton != null) _nextRoundButton.onClick.RemoveListener(NextRound);
         if (_retryButton != null) _retryButton.onClick.RemoveListener(Retry);
+        if (_betting != null) _betting.StateChanged -= Refresh;
+        if (_coin != null) _coin.Changed -= RefreshBetting;
     }
 
     void Update()
     {
-        Refresh();
+        // Los contadores y el rol temporizado pueden cambiar durante la simulación.
+        RefreshMatch();
     }
 
     void Refresh()
     {
+        RefreshMatch();
+        RefreshBetting();
+    }
+
+    void RefreshMatch()
+    {
         if (_match == null || _betting == null) return;
 
         string state = _match.IsFinished
-            ? "Ganó " + BettingManager.SideName(_match.Winner)
+            ? "Ganó " + _match.Winner.DisplayName()
             : (_match.IsRunning ? "Ronda en curso" : "Esperando apuesta");
         SetText(_matchStateText, state);
         SetText(_phaseText, _match.Roles != null && _match.Roles.PacmanIsHunter
@@ -110,6 +134,11 @@ public class BettingHUD : MonoBehaviour
         int needed = _match.Roles != null ? _match.Roles.FoodNeeded : 0;
         SetText(_countsText, "Comida: " + food + "/" + needed +
             "    Pac-Man: " + boids + "    Fantasmas: " + ghosts);
+    }
+
+    void RefreshBetting()
+    {
+        if (_match == null || _betting == null) return;
 
         SetText(_balanceText, "Saldo: $" + _betting.Balance +
             " / Meta: $" + _betting.GoalBalance);
@@ -128,7 +157,7 @@ public class BettingHUD : MonoBehaviour
         if (beforeRound)
         {
             SetText(_betSummaryText, "Apuesta: $" + _betting.Stake + " a " +
-                BettingManager.SideName(_betting.BetSide));
+                _betting.BetSide.DisplayName());
             SetText(_coinPriceText, _coin != null
                 ? "Moneda opcional: $" + _coin.Cost : "Moneda no disponible");
             SetActive(_coinChoiceGroup, _coin != null && !_coin.HasFlipped);
@@ -136,17 +165,17 @@ public class BettingHUD : MonoBehaviour
             _tailsButton.interactable = _betting.CanBuyCoin;
             SetText(_coinResultText, _coin != null && _coin.HasFlipped
                 ? "Salió " + (_coin.WasHeads ? "cara" : "cruz") +
-                  ". Boost para " + BettingManager.SideName(_coin.BoostSide)
+                  ". Boost para " + _coin.BoostSide.DisplayName()
                 : "");
         }
 
         if (_betting.IsRunning)
             SetText(_runningText, "Simulación en curso. Apostaste $" +
-                _betting.Stake + " a " + BettingManager.SideName(_betting.BetSide) + ".");
+                _betting.Stake + " a " + _betting.BetSide.DisplayName() + ".");
 
         if (_betting.MatchFinished)
         {
-            string result = "Ganó " + BettingManager.SideName(_betting.LastWinner) + ".";
+            string result = "Ganó " + _betting.LastWinner.DisplayName() + ".";
             if (_betting.GoalReached)
                 result += "\n¡Llegaste a la meta! Ganaste.";
             else if (_betting.Bankrupt)

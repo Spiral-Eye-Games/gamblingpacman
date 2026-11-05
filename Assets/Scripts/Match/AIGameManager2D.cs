@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-//mantiene los participantes, resuelve las capturas y decide el ganador de cada ronda.
+// Coordina los participantes, la arena y el ciclo de la ronda.
 public class AIGameManager2D : MonoBehaviour
 {
     public static AIGameManager2D Instance { get; private set; }
 
-    //variables  los numeros, no son para ajustar el juego, por eso no van al inspector
-    const float MinDistance = 0.0001f;          //es prácticamente el mismo punto
-    const float MinRelativeMoveSqr = 0.000001f; //los dos agentes se mueven igual
-    const float TeleportMargin = 0.5f;          //tolerancia para distinguir un paso normal de un teletransporte
+    const float MinDistance = 0.0001f;
 
     //Zona de entrada que teletransporta a una salida, modificable en el inspector
     [Serializable]
@@ -123,49 +120,14 @@ public class AIGameManager2D : MonoBehaviour
                 HunterFSM2D ghost = _hunters[j];
                 if (ghost == null || !ghost.IsAlive) continue;
                 float radius = pacmanHunts ? boid.CaptureRadius : ghost.CaptureRadius;
-                if (!PathsTouch(boid.Motor, ghost.Motor, radius)) continue;
+                if (!CaptureContact2D.PathsTouch(boid.Motor, ghost.Motor, radius, Time.deltaTime))
+                    continue;
 
                 if (pacmanHunts) ghost.CaughtByPacman();
                 else boid.Caught();
                 return; // una captura puede cambiar el resultado y las listas
             }
         }
-    }
-
-    // ¿Se tocaron los dos agentes en algún momento de este frame?
-    //ademas del punto final, se revisa la trayectoria: así también cuenta
-    //un cruce rápido que no termina en solapamiento
-    static bool PathsTouch(IAgentMotor first, IAgentMotor second, float radius)
-    {
-        Vector2 firstEnd = first.Position;
-        Vector2 secondEnd = second.Position;
-        float radiusSqr = radius * radius;
-
-        //Caso simple: al final del frame ya se están tocando.
-        if ((firstEnd - secondEnd).sqrMagnitude <= radiusSqr) return true;
-
-        //Caso del cruce rápido: se busca el momento del frame en que estuvieron más cerca.
-        Vector2 firstStart = FrameStart(first);
-        Vector2 secondStart = FrameStart(second);
-        Vector2 relativeStart = firstStart - secondStart;
-        Vector2 relativeMove = (firstEnd - firstStart) - (secondEnd - secondStart);
-        float moveSqr = relativeMove.sqrMagnitude;
-
-        // t va de 0 (inicio del frame) a 1 (final): cuándo estuvieron más cerca.
-        float t = moveSqr > MinRelativeMoveSqr
-            ? Mathf.Clamp01(-Vector2.Dot(relativeStart, relativeMove) / moveSqr)
-            : 0f;
-        return (relativeStart + relativeMove * t).sqrMagnitude <= radiusSqr;
-    }
-
-    //Punto donde el agente empezó el frame. Si se movió más de lo posible, fue un
-    //teletransporte (wraparound) y no una captura: se usa el punto final como inicio.
-    static Vector2 FrameStart(IAgentMotor agent)
-    {
-        Vector2 end = agent.Position;
-        Vector2 start = agent.FrameStartPosition;
-        float maxStep = agent.MaxSpeed * Time.deltaTime + TeleportMargin;
-        return (end - start).sqrMagnitude > maxStep * maxStep ? end : start;
     }
 
     void MarkFrameEnd()
@@ -229,7 +191,7 @@ public class AIGameManager2D : MonoBehaviour
         _running = false;
         _finished = true;
         _winner = winner;
-        Debug.Log("Ganó " + BettingManager.SideName(winner), this);
+        Debug.Log("Ganó " + winner.DisplayName(), this);
         MatchFinished?.Invoke(winner);
     }
 

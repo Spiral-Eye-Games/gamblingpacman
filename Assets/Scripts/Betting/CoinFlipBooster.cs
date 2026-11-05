@@ -10,6 +10,8 @@ public class CoinFlipBooster : MonoBehaviour
     BettingManager _betting;
     MatchSide _boostSide;
 
+    internal event System.Action Changed;
+
     public int Cost => _cost;
     public bool HasFlipped { get; private set; }
     public bool WasHeads { get; private set; }
@@ -35,7 +37,8 @@ public class CoinFlipBooster : MonoBehaviour
             (_betting.BetSide == MatchSide.Pacman ? MatchSide.Ghosts : MatchSide.Pacman);
         HasFlipped = true;
         message = "Salió " + (WasHeads ? "cara" : "cruz") +
-            ". Boost para " + BettingManager.SideName(_boostSide) + ".";
+            ". Boost para " + _boostSide.DisplayName() + ".";
+        Changed?.Invoke();
         return true;
     }
 
@@ -67,5 +70,6 @@ public class CoinFlipBooster : MonoBehaviour
         HasFlipped = false;
         WasHeads = false;
         GuessedCorrectly = false;
+        Changed?.Invoke();
     }
 }

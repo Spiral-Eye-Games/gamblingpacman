@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//copia los agentes de la escena y los coloca dentro de zonas configurables
+// Usa los agentes de la escena como prototipos para las copias.
 public class TeamSpawner2D : MonoBehaviour
 {
+    const int PlacementAttempts = 60;
+
     [SerializeField, Min(0)] int _extraBoids = 2;
     [SerializeField, Min(0)] int _extraHunters = 1;
 
@@ -33,67 +35,30 @@ public class TeamSpawner2D : MonoBehaviour
         for (int i = 0; i < boids.Length; i++) occupied.Add(boids[i].transform.position);
         for (int i = 0; i < hunters.Length; i++) occupied.Add(hunters[i].transform.position);
 
-        for (int i = 1; i <= _extraBoids; i++)
-        {
-            Vector2 position;
-            if (!TryFindSpawn(manager, _boidAreaCenter, _boidAreaSize,
-                occupied, out position))
-            {
-                Debug.LogWarning("No quedó lugar para otro boid en su zona de aparición.", this);
-                break;
-            }
-
-            BoidAgent2D copy = Instantiate(boids[0], position, boids[0].transform.rotation);
-            copy.name = "Pacman boid " + (i + 1);
-            occupied.Add(position);
-        }
-
-        for (int i = 1; i <= _extraHunters; i++)
-        {
-            Vector2 position;
-            if (!TryFindSpawn(manager, _hunterAreaCenter, _hunterAreaSize,
-                occupied, out position))
-            {
-                Debug.LogWarning("No quedó lugar para otro fantasma en su zona de aparición.", this);
-                break;
-            }
-
-            HunterFSM2D copy = Instantiate(hunters[0], position, hunters[0].transform.rotation);
-            copy.name = "Fantasma " + (i + 1);
-            occupied.Add(position);
-        }
+        var placement = new SpawnPlacement2D(manager, _walls, _spawnRadius, PlacementAttempts);
+        SpawnCopies(boids[0], _extraBoids, _boidAreaCenter, _boidAreaSize, placement, occupied,
+            "Pacman boid ", "No quedó lugar para otro boid en su zona de aparición.");
+        SpawnCopies(hunters[0], _extraHunters, _hunterAreaCenter, _hunterAreaSize, placement, occupied,
+            "Fantasma ", "No quedó lugar para otro fantasma en su zona de aparición.");
     }
 
-    bool TryFindSpawn(AIGameManager2D manager, Vector2 localCenter,
-        Vector2 areaSize, List<Vector2> occupied, out Vector2 position)
+    void SpawnCopies<T>(T prototype, int count, Vector2 localCenter, Vector2 size,
+        SpawnPlacement2D placement, List<Vector2> occupied, string namePrefix, string warning)
+        where T : Component
     {
         Vector2 center = (Vector2)transform.position + localCenter;
-        for (int attempt = 0; attempt < 60; attempt++)
+        for (int i = 1; i <= count; i++)
         {
-            Vector2 candidate = center + new Vector2(
-                Random.Range(-areaSize.x * 0.5f, areaSize.x * 0.5f),
-                Random.Range(-areaSize.y * 0.5f, areaSize.y * 0.5f));
-            if (!manager.IsInsideArena(candidate, _spawnRadius)) continue;
-            if (_walls.value != 0 &&
-                Physics2D.OverlapCircle(candidate, _spawnRadius, _walls) != null)
-                continue;
-
-            bool tooClose = false;
-            for (int i = 0; i < occupied.Count; i++)
+            if (!placement.TryFindPosition(center, size, out Vector2 position, occupied))
             {
-                if (Vector2.Distance(candidate, occupied[i]) >= _spawnRadius * 2f)
-                    continue;
-                tooClose = true;
-                break;
+                Debug.LogWarning(warning, this);
+                return;
             }
-            if (tooClose) continue;
 
-            position = candidate;
-            return true;
+            T copy = Instantiate(prototype, position, prototype.transform.rotation);
+            copy.name = namePrefix + (i + 1);
+            occupied.Add(position);
         }
-
-        position = Vector2.zero;
-        return false;
     }
 
     void OnValidate()
