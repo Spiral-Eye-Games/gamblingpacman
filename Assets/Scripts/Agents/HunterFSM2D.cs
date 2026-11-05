@@ -6,18 +6,20 @@ using UnityEngine;
 public class HunterFSM2D : MonoBehaviour
 {
     [SerializeField] AIGameManager2D _manager;
-    [SerializeField] Transform[] _waypoints;
     [SerializeField, Min(0.1f)] float _viewRadius = 5f;
     [SerializeField, Min(0.01f)] float _catchRadius = 0.45f;
     [SerializeField] LayerMask _walls;
-    [SerializeField, Min(0.01f)] float _bodyRadius = 0.3f;
+    [SerializeField, Min(0.01f), Tooltip("Radio de colisión contra paredes en unidades del mundo.")]
+    float _bodyRadius = 0.22f;
 
     SteeringGhost _motor;
     AStarRoute2D _route;
-    int _waypointIndex;
+    BoidAgent2D _visibleTarget;
+    Vector2 _lastPosition;
     int _patrolIndex;
+    int _patrolEntryIndex = -1;
     bool _alive = true;
-    bool _pacmanWasHunter;
+    bool _returningToPatrol;
 
     public SteeringGhost Motor => _motor;
     public float CaptureRadius => _catchRadius;
@@ -28,6 +30,7 @@ public class HunterFSM2D : MonoBehaviour
         _motor = GetComponent<SteeringGhost>();
         _motor.ConfigureWallCollision(_walls, _bodyRadius);
         _route = new AStarRoute2D(_motor, _walls, _bodyRadius);
+        _lastPosition = _motor.Position;
     }
 
     void Start()
@@ -40,10 +43,8 @@ public class HunterFSM2D : MonoBehaviour
             return;
         }
 
-        if (_waypoints != null && _waypoints.Length > 0)
-            _waypointIndex = _manager.Hunters.Count % _waypoints.Length;
-
         _manager.RegisterHunter(this);
+        ReturnToPatrol();
     }
 
     void OnDisable()
@@ -60,41 +61,54 @@ public class HunterFSM2D : MonoBehaviour
             return;
         }
 
-        bool pacmanHunts = _manager.Roles.PacmanIsHunter;
-        if (_pacmanWasHunter != pacmanHunts)
+        Vector2 position = _motor.Position;
+        // El motor es dueño de su desplazamiento. Un cambio externo invalida la ruta.
+        if (!position.Equals(_lastPosition))
+            ReturnToPatrol();
+
+        if (_returningToPatrol && _patrolEntryIndex >= 0 &&
+            _route.IsAtPatrolNode(_manager.NavigationNodes[_patrolEntryIndex]))
         {
-            _pacmanWasHunter = pacmanHunts;
+            _returningToPatrol = false;
+            _patrolIndex = (_patrolEntryIndex + 1) % _manager.NavigationNodes.Count;
+            _patrolEntryIndex = -1;
+            _route.Clear();
+        }
+
+        BoidAgent2D target = _returningToPatrol || _manager.Roles.PacmanIsHunter
+            ? null : _manager.FindNearestBoid(position, _viewRadius, _walls);
+        if (!ReferenceEquals(_visibleTarget, target))
+        {
+            _visibleTarget = target;
             _route.Clear();
         }
 
         if (_route.CanReplan)
         {
             _route.BeginPlan();
-            BoidAgent2D target = pacmanHunts ? null :
-                _manager.FindNearestBoid(_motor.Position, _viewRadius);
-
-            if (target == null || !_route.TryPlan(_manager, target.Motor.Position))
-                PlanPatrol();
+            if (_returningToPatrol)
+            {
+                if (_patrolEntryIndex < 0 ||
+                    !_route.TryPlan(_manager, _manager.NavigationNodes[_patrolEntryIndex]))
+                    _patrolEntryIndex = _route.PlanPatrolEntry(_manager);
+            }
+            else if (target == null || !_route.TryPlan(_manager, target.Motor.Position))
+            {
+                _route.PlanPatrolNodes(_manager, ref _patrolIndex);
+            }
         }
 
         _route.Move();
+        _lastPosition = _motor.Position;
     }
 
-    void PlanPatrol()
+    void ReturnToPatrol()
     {
-        int count = _waypoints?.Length ?? 0;
-        for (int i = 0; i < count; i++)
-        {
-            Transform point = _waypoints[_waypointIndex];
-            if (point != null &&
-                ((Vector2)point.position - _motor.Position).sqrMagnitude > AStarRoute2D.PatrolArrivalSqr &&
-                _route.TryPlan(_manager, point.position))
-                return;
-
-            _waypointIndex = (_waypointIndex + 1) % count;
-        }
-
-        _route.PlanPatrolNodes(_manager, ref _patrolIndex);
+        _visibleTarget = null;
+        _returningToPatrol = _manager.NavigationNodes.Count > 0;
+        _patrolEntryIndex = -1;
+        _route.Clear();
+        _motor.Stop();
     }
 
     public void CaughtByPacman()
@@ -110,5 +124,9 @@ public class HunterFSM2D : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         _route?.Draw(Color.cyan);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, _viewRadius);
+        if (_visibleTarget != null)
+            Gizmos.DrawLine(transform.position, _visibleTarget.transform.position);
     }
 }

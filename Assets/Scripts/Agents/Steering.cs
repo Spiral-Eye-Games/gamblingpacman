@@ -32,7 +32,8 @@ public class Steering : MonoBehaviour, IAgentMotor, IMovementTrace2D
         if (dt <= 0f) return true;
 
         FrameStartPosition = Position;
-        if (!AStarPathfinding2D.SegmentIsClear(FrameStartPosition, waypoint, _radius, _walls))
+        if (Physics2D.OverlapCircle(FrameStartPosition, _radius, _walls) != null ||
+            !AStarPathfinding2D.SegmentIsClear(FrameStartPosition, waypoint, _radius, _walls))
         {
             Stop();
             return false;

@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 042ebc69f32079c4d9f2a8dc9ad5b2a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxSpeed: 5
+  _maxSpeed: 1
   _faceVelocity: 1
   _spriteAngleOffset: 0
 --- !u!114 &6430442455265389251
@@ -117,15 +117,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _manager: {fileID: 0}
-  _waypoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   _viewRadius: 3.59
   _catchRadius: 0.45
   _walls:
     serializedVersion: 2
     m_Bits: 8
-  _bodyRadius: 0.3
+  _bodyRadius: 0.22

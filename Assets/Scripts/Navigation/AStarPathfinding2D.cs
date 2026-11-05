@@ -18,7 +18,7 @@ public static class AStarPathfinding2D
             return true;
         }
 
-        var frontier = new List<int>();
+        var frontier = new NodePriorityQueue(nodes.Count);
         var costSoFar = new float[nodes.Count];
         var cameFrom = new int[nodes.Count];
         var walkable = new bool[nodes.Count];
@@ -29,21 +29,8 @@ public static class AStarPathfinding2D
             Visit(i, -1, start, 0f);
         }
 
-        while (frontier.Count > 0)
+        while (frontier.TryDequeue(out int current))
         {
-            int bestIndex = 0;
-            float bestPriority = float.PositiveInfinity;
-            for (int i = 0; i < frontier.Count; i++)
-            {
-                int node = frontier[i];
-                float priority = costSoFar[node] + Vector2.Distance(nodes[node], destination);
-                if (priority >= bestPriority) continue;
-                bestIndex = i;
-                bestPriority = priority;
-            }
-
-            int current = frontier[bestIndex];
-            frontier.RemoveAt(bestIndex);
             Vector2 position = nodes[current];
 
             // Si el destino es visible, la heurística es el costo real del último tramo.
@@ -76,7 +63,7 @@ public static class AStarPathfinding2D
 
             costSoFar[next] = newCost;
             cameFrom[next] = parent;
-            if (!frontier.Contains(next)) frontier.Add(next);
+            frontier.EnqueueOrDecrease(next, newCost + Vector2.Distance(position, destination));
         }
     }
 

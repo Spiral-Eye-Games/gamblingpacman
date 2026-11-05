@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a9d92fb09e379c4292329ac196b11f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxSpeed: 3
+  _maxSpeed: 1
   _faceVelocity: 1
   _spriteAngleOffset: 0
 --- !u!114 &2778265626172236626
@@ -118,6 +118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _manager: {fileID: 0}
   _foodSenseRadius: 3.11
+  _huntSenseRadius: 20
   _pickupRadius: 0.35
   _walls:
     serializedVersion: 2

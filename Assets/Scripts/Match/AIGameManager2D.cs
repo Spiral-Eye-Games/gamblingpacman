@@ -239,15 +239,19 @@ public class AIGameManager2D : MonoBehaviour
         return nearest;
     }
 
-    public BoidAgent2D FindNearestBoid(Vector2 position, float radius)
+    public BoidAgent2D FindNearestBoid(Vector2 position, float radius, LayerMask sightObstacles = default)
     {
         BoidAgent2D nearest = null;
         float bestDistance = radius;
         foreach (BoidAgent2D boid in _boids)
         {
             if (boid == null || !boid.IsAlive) continue;
-            float distance = Vector2.Distance(boid.Motor.Position, position);
+            Vector2 target = boid.Motor.Position;
+            float distance = Vector2.Distance(target, position);
             if (distance >= bestDistance) continue;
+            if (sightObstacles.value != 0 &&
+                Physics2D.Linecast(position, target, sightObstacles).collider != null)
+                continue;
             bestDistance = distance;
             nearest = boid;
         }

@@ -6,7 +6,7 @@ internal sealed class AStarRoute2D
 {
     const float ReplanInterval = 0.25f;
     const float ArrivalDistanceSqr = 0.0001f;
-    internal const float PatrolArrivalSqr = 0.0225f;
+    const float PatrolArrivalSqr = 0.0225f;
 
     readonly IAgentMotor _motor;
     readonly LayerMask _walls;
@@ -57,12 +57,33 @@ internal sealed class AStarRoute2D
         for (int attempt = 0; attempt < nodes.Count; attempt++)
         {
             Vector2 point = nodes[index];
-            if ((point - _motor.Position).sqrMagnitude > PatrolArrivalSqr &&
-                TryPlan(manager, point))
+            if (!IsAtPatrolNode(point) && TryPlan(manager, point))
                 return;
 
             index = (index + 1) % nodes.Count;
         }
+    }
+
+    public bool IsAtPatrolNode(Vector2 point)
+    {
+        return (point - _motor.Position).sqrMagnitude <= PatrolArrivalSqr;
+    }
+
+    public int PlanPatrolEntry(AIGameManager2D manager)
+    {
+        IReadOnlyList<Vector2> nodes = manager.NavigationNodes;
+        Vector2 position = _motor.Position;
+        float nearestDistanceSqr = float.PositiveInfinity;
+        int nearest = -1;
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            float distanceSqr = (nodes[i] - position).sqrMagnitude;
+            if (distanceSqr >= nearestDistanceSqr || !TryPlan(manager, nodes[i])) continue;
+
+            nearestDistanceSqr = distanceSqr;
+            nearest = i;
+        }
+        return nearest;
     }
 
     public void Move()
