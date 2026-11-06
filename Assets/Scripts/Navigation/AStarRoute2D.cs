@@ -88,9 +88,16 @@ internal sealed class AStarRoute2D
 
     public void Move()
     {
-        while (_next < _path.Count &&
-               (_path[_next] - _motor.Position).sqrMagnitude <= ArrivalDistanceSqr)
+        Vector2 position = _motor.Position;
+        while (_next < _path.Count && (_path[_next] - position).sqrMagnitude <= ArrivalDistanceSqr)
+        {
+            // En una esquina, saltar un punto cercano puede cortar por la pared.
+            if (_next + 1 < _path.Count &&
+                !AStarPathfinding2D.SegmentIsClear(position, _path[_next + 1], _radius, _walls))
+                break;
+
             _next++;
+        }
 
         if (_next == _path.Count)
         {

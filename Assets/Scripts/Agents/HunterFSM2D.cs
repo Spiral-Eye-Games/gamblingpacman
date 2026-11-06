@@ -85,6 +85,7 @@ public class HunterFSM2D : MonoBehaviour
 
         if (_route.CanReplan)
         {
+            _motor.ClearShallowWallOverlap(_manager.ArenaBounds, _walls, _bodyRadius);
             _route.BeginPlan();
             if (_returningToPatrol)
             {

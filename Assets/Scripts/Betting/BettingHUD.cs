@@ -34,6 +34,7 @@ public class BettingHUD : MonoBehaviour
     [SerializeField] Button _retryButton; // aparece al ganar o perder el juego
 
     [Header("Grupos de la interfaz")]
+    [SerializeField] GameObject _bettingPanel;
     [SerializeField] GameObject _betEntryGroup;
     [SerializeField] GameObject _beforeRoundGroup;
     [SerializeField] GameObject _coinChoiceGroup;
@@ -111,6 +112,8 @@ public class BettingHUD : MonoBehaviour
     {
         RefreshMatch();
         RefreshBetting();
+        if (_betting != null)
+            SetActive(_bettingPanel, !_betting.IsRunning);
     }
 
     void RefreshMatch()

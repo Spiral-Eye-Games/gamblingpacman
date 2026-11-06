@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class AStarPathfinding2D
 {
+    const float CornerClearance = 0.025f;
+
     // El inicio y el destino se conectan a los nodos visibles para esta búsqueda.
     public static bool TryFindPath(Rect arena, IReadOnlyList<Vector2> nodes,
         Vector2 start, Vector2 destination, LayerMask walls, float radius, List<Vector2> path)
@@ -18,6 +20,38 @@ public static class AStarPathfinding2D
             return true;
         }
 
+        if (TrySearch(arena, nodes, start, destination, walls, radius, path))
+            return true;
+
+        // Completa el grafo solo para esta búsqueda. La patrulla conserva sus nodos.
+        var detourNodes = new List<Vector2>(nodes);
+        foreach (Collider2D wall in Physics2D.OverlapBoxAll(arena.center, arena.size, 0f, walls))
+        {
+            Bounds bounds = wall.bounds;
+            float clearance = radius + CornerClearance;
+            float left = bounds.min.x - clearance;
+            float right = bounds.max.x + clearance;
+            float bottom = bounds.min.y - clearance;
+            float top = bounds.max.y + clearance;
+            AddCorner(new Vector2(left, bottom));
+            AddCorner(new Vector2(left, top));
+            AddCorner(new Vector2(right, bottom));
+            AddCorner(new Vector2(right, top));
+        }
+
+        return detourNodes.Count > nodes.Count &&
+            TrySearch(arena, detourNodes, start, destination, walls, radius, path);
+
+        void AddCorner(Vector2 corner)
+        {
+            if (IsWalkable(corner, arena, walls, radius))
+                detourNodes.Add(corner);
+        }
+    }
+
+    static bool TrySearch(Rect arena, IReadOnlyList<Vector2> nodes, Vector2 start,
+        Vector2 destination, LayerMask walls, float radius, List<Vector2> path)
+    {
         var frontier = new NodePriorityQueue(nodes.Count);
         var costSoFar = new float[nodes.Count];
         var cameFrom = new int[nodes.Count];
@@ -67,7 +101,7 @@ public static class AStarPathfinding2D
         }
     }
 
-    static bool IsWalkable(Vector2 point, Rect arena, LayerMask walls, float radius)
+    internal static bool IsWalkable(Vector2 point, Rect arena, LayerMask walls, float radius)
     {
         return point.x >= arena.xMin + radius && point.x <= arena.xMax - radius &&
             point.y >= arena.yMin + radius && point.y <= arena.yMax - radius &&

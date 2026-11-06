@@ -29,6 +29,7 @@ public class FoodPickup2D : MonoBehaviour
     public bool TryConsume(BoidAgent2D boid)
     {
         if (!IsAvailable || boid == null || !boid.IsAlive) return false;
+        if (_manager != null && _manager.Roles != null && _manager.Roles.PacmanIsHunter) return false;
         _consumed = true;
         if (_manager != null) _manager.FoodConsumed(this);
         gameObject.SetActive(false);
