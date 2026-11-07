@@ -18,8 +18,16 @@ public class PlayerMovement : MonoBehaviour
     PhysicsMaterial2D _contactMaterial;
     Vector2 _input;
 
+    //memento de posición y rotación (el propio script es Originator y Caretaker)*
+    Vector2 _savedPosition;
+    float _savedRotation;
+    bool _wasRunning;
+
     public LayerMask Walls => _walls;
     public float BodyRadius => _bodyRadius;
+
+    //se mueve solo mientras la ronda corre (o si no hay BettingManager en la escena)*
+    bool CanMove => BettingManager.Instance == null || BettingManager.Instance.IsRunning;
 
     void Awake()
     {
@@ -62,11 +70,31 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        //sin ronda en curso, el input se trata como cero*
+        if (!CanMove)
+        {
+            _input = Vector2.zero;
+            return;
+        }
+
         _input = _move != null ? _move.action?.ReadValue<Vector2>() ?? Vector2.zero : Vector2.zero;
     }
 
     void FixedUpdate()
     {
+        //detecta el inicio y el fin de la ronda*
+        bool running = CanMove;
+        if (running && !_wasRunning) SaveSnapshot();
+        else if (!running && _wasRunning) RestoreSnapshot();
+        _wasRunning = running;
+
+        //frenado mientras la ronda no corre*
+        if (!running)
+        {
+            _body.linearVelocity = Vector2.zero;
+            return;
+        }
+
         if (_input == Vector2.zero)
         {
             _body.linearVelocity = Vector2.zero;
@@ -81,5 +109,20 @@ public class PlayerMovement : MonoBehaviour
         float radians = (angle + _spriteForwardAngle) * Mathf.Deg2Rad;
         Vector2 forward = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
         _body.linearVelocity = forward * _speed;
+    }
+
+    //memento (foto de posición y rotación)*
+    void SaveSnapshot()
+    {
+        _savedPosition = _body.position;
+        _savedRotation = _body.rotation;
+    }
+
+    void RestoreSnapshot()
+    {
+        _body.linearVelocity = Vector2.zero;
+        _body.position = _savedPosition;
+        _body.rotation = _savedRotation;
+        _input = Vector2.zero;
     }
 }
