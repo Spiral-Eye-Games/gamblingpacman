@@ -35,6 +35,30 @@ public class AIGameManager2D : MonoBehaviour
             _entrySize.x = Mathf.Max(0.01f, _entrySize.x);
             _entrySize.y = Mathf.Max(0.01f, _entrySize.y);
         }
+
+        public bool TryWrap(Vector2 origin, Vector2 previousPosition, Vector2 position,
+            out Vector2 exitPosition)
+        {
+            exitPosition = position;
+            Vector2 center = origin + _entryLocalCenter;
+            Bounds entry = new Bounds(center, new Vector3(_entrySize.x, _entrySize.y, 1f));
+            Vector2 crossingPosition = position;
+
+            if (!entry.Contains(position))
+            {
+                Vector2 movement = position - previousPosition;
+                float distance = movement.magnitude;
+                if (distance < MinDistance) return false;
+
+                Ray ray = new Ray(previousPosition, movement / distance);
+                if (!entry.IntersectRay(ray, out float hitDistance) || hitDistance > distance)
+                    return false;
+                crossingPosition = previousPosition + movement / distance * hitDistance;
+            }
+
+            exitPosition = origin + _exitLocalPosition + ExitOffset(crossingPosition - center);
+            return true;
+        }
     }
 
     [Header("Zonas de wraparound")]
@@ -43,12 +67,14 @@ public class AIGameManager2D : MonoBehaviour
     [Header("Arena")]
     [SerializeField] Vector2 _arenaSize = new Vector2(16f, 9f);
     [SerializeField] Vector2[] _navigationNodes = Array.Empty<Vector2>();
+    [SerializeField] Vector2Int[] _navigationLinks = Array.Empty<Vector2Int>();
 
     readonly List<BoidAgent2D> _boids = new List<BoidAgent2D>();
     readonly List<HunterFSM2D> _hunters = new List<HunterFSM2D>();
     readonly List<FoodPickup2D> _food = new List<FoodPickup2D>();
-    Vector2[] _worldNavigationNodes;
+    NavigationGraph2D _navigationGraph;
     RoleSwapManager _roles;
+    RoundExit2D _exit;
     bool _running;
     bool _finished;
     MatchSide _winner;
@@ -60,7 +86,8 @@ public class AIGameManager2D : MonoBehaviour
     public IReadOnlyList<FoodPickup2D> Food => _food;
     public RoleSwapManager Roles => _roles;
     public Rect ArenaBounds => new Rect((Vector2)transform.position - _arenaSize * 0.5f, _arenaSize);
-    public IReadOnlyList<Vector2> NavigationNodes => _worldNavigationNodes;
+    public IReadOnlyList<Vector2> NavigationNodes => _navigationGraph?.Nodes;
+    internal IReadOnlyList<int>[] NavigationNeighbors => _navigationGraph?.Neighbors;
     public bool IsRunning => _running;
     public bool IsFinished => _finished;
     public MatchSide Winner => _winner;
@@ -75,9 +102,7 @@ public class AIGameManager2D : MonoBehaviour
         }
         Instance = this;
         _roles = GetComponent<RoleSwapManager>();
-        _worldNavigationNodes = new Vector2[_navigationNodes.Length];
-        for (int i = 0; i < _navigationNodes.Length; i++)
-            _worldNavigationNodes[i] = (Vector2)transform.position + _navigationNodes[i];
+        _navigationGraph = new NavigationGraph2D(transform.position, _navigationNodes, _navigationLinks);
     }
 
     void Start()
@@ -102,6 +127,8 @@ public class AIGameManager2D : MonoBehaviour
         if (!_running) return;
 
         ResolveCaptures();
+        if (_running && _exit != null && _exit.TryFinish(_boids))
+            Finish(MatchSide.Pacman);
         MarkFrameEnd();
     }
 
@@ -148,6 +175,9 @@ public class AIGameManager2D : MonoBehaviour
             Debug.LogError("La ronda necesita al menos un boid y un fantasma.", this);
             return false;
         }
+        _exit = Array.Find(FindObjectsByType<RoundExit2D>(FindObjectsSortMode.None),
+            exit => exit.isActiveAndEnabled && exit.gameObject.scene == gameObject.scene);
+        if (_exit != null) _exit.BeginRound();
         _running = true;
         return true;
     }
@@ -165,24 +195,10 @@ public class AIGameManager2D : MonoBehaviour
         Finish(MatchSide.Ghosts);
     }
 
-    //Gana Pacman cuando no queda ningún fantasma vivo.
-    public void GhostCaught()
-    {
-        if (!_running || _finished || AnyHunterAlive()) return;
-        Finish(MatchSide.Pacman);
-    }
-
     bool AnyBoidAlive()
     {
         foreach (BoidAgent2D boid in _boids)
             if (boid != null && boid.IsAlive) return true;
-        return false;
-    }
-
-    bool AnyHunterAlive()
-    {
-        foreach (HunterFSM2D hunter in _hunters)
-            if (hunter != null && hunter.IsAlive) return true;
         return false;
     }
 
@@ -249,8 +265,7 @@ public class AIGameManager2D : MonoBehaviour
             Vector2 target = boid.Motor.Position;
             float distance = Vector2.Distance(target, position);
             if (distance >= bestDistance) continue;
-            if (sightObstacles.value != 0 &&
-                Physics2D.Linecast(position, target, sightObstacles).collider != null)
+            if (!LineOfSight2D.CanSee(position, target, boid.BodyRadius, sightObstacles))
                 continue;
             bestDistance = distance;
             nearest = boid;
@@ -273,29 +288,8 @@ public class AIGameManager2D : MonoBehaviour
     {
         foreach (WrapArea area in _wrapAreas)
         {
-            Vector2 entryCenter = (Vector2)transform.position + area.EntryLocalCenter;
-            // Profundidad 1: el juego es 2D, Bounds solo necesita que no sea 0.
-            Bounds entry = new Bounds(entryCenter,
-                new Vector3(area.EntrySize.x, area.EntrySize.y, 1f));
-            Vector2 crossingPosition = position;
-
-            if (!entry.Contains(position))
-            {
-                // No terminó adentro: se revisa si el paso atravesó la zona.
-                Vector2 movement = position - previousPosition;
-                float distance = movement.magnitude;
-                if (distance < MinDistance) continue;
-
-                Vector2 direction = movement / distance;
-                Ray ray = new Ray(previousPosition, direction);
-                if (!entry.IntersectRay(ray, out float hitDistance) ||
-                    hitDistance > distance)
-                    continue;
-                crossingPosition = previousPosition + direction * hitDistance;
-            }
-
-            Vector2 offset = area.ExitOffset(crossingPosition - entryCenter);
-            return (Vector2)transform.position + area.ExitLocalPosition + offset;
+            if (area.TryWrap(transform.position, previousPosition, position, out Vector2 exit))
+                return exit;
         }
 
         return position;

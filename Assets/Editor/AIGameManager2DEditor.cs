@@ -5,10 +5,12 @@ using UnityEngine;
 public class AIGameManager2DEditor : Editor
 {
     SerializedProperty _nodes;
+    SerializedProperty _links;
 
     void OnEnable()
     {
         _nodes = serializedObject.FindProperty("_navigationNodes");
+        _links = serializedObject.FindProperty("_navigationLinks");
     }
 
     public override void OnInspectorGUI()
@@ -17,15 +19,18 @@ public class AIGameManager2DEditor : Editor
         using (new EditorGUI.DisabledScope(true))
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
 
-        DrawPropertiesExcluding(serializedObject, "m_Script", "_navigationNodes");
+        DrawPropertiesExcluding(serializedObject, "m_Script", "_navigationNodes", "_navigationLinks");
 
         bool playing = EditorApplication.isPlayingOrWillChangePlaymode;
         using (new EditorGUI.DisabledScope(playing))
+        {
             EditorGUILayout.PropertyField(_nodes, new GUIContent("Nodos de navegación"), true);
+            EditorGUILayout.PropertyField(_links, new GUIContent("Conexiones entre nodos"), true);
+        }
 
         EditorGUILayout.HelpBox(playing
-            ? "Salí de Play Mode para editar los nodos."
-            : "Cambiá Size para ajustar la cantidad. Editá X e Y o arrastrá los nodos numerados en Scene.",
+            ? "Salí de Play Mode para editar los nodos y sus conexiones."
+            : "Arrastrá los nodos numerados en Scene. Cada conexión une los nodos X e Y en ambos sentidos.",
             MessageType.Info);
 
         if (serializedObject.ApplyModifiedProperties())
@@ -38,6 +43,20 @@ public class AIGameManager2DEditor : Editor
 
         serializedObject.Update();
         Vector3 origin = ((AIGameManager2D)target).transform.position;
+        using (new Handles.DrawingScope(Color.cyan))
+        {
+            for (int i = 0; i < _links.arraySize; i++)
+            {
+                Vector2Int link = _links.GetArrayElementAtIndex(i).vector2IntValue;
+                if ((uint)link.x >= _nodes.arraySize || (uint)link.y >= _nodes.arraySize)
+                    continue;
+
+                Vector2 from = _nodes.GetArrayElementAtIndex(link.x).vector2Value;
+                Vector2 to = _nodes.GetArrayElementAtIndex(link.y).vector2Value;
+                Handles.DrawLine(origin + (Vector3)from, origin + (Vector3)to);
+            }
+        }
+
         using (new Handles.DrawingScope(Color.magenta))
         {
             for (int i = 0; i < _nodes.arraySize; i++)

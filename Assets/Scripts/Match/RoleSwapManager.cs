@@ -11,7 +11,7 @@ public class RoleSwapManager : MonoBehaviour
     public int FoodNeeded => _foodNeeded;
     public int FoodEaten { get; private set; }
 
-    //Ya no hace falta un bool ni un Update, pakmanjiji es cazador mientras no llegue _hunterUntil
+    // El efecto permanece activo hasta que vence el tiempo de caza.
     public bool PacmanIsHunter => Time.time < _hunterUntil;
 
     public void AddFood(int units)

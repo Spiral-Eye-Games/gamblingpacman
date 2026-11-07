@@ -1,0 +1,1448 @@
+fileFormatVersion: 2
+guid: edb40242c1416d143a4a865388ef0d21
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2416789189524698447
+    second: PacManAssets_Map_TileSet_0
+  - first:
+      213: 4026806367355348191
+    second: PacManAssets_Map_TileSet_1
+  - first:
+      213: -8927133916354389279
+    second: PacManAssets_Map_TileSet_2
+  - first:
+      213: -8076672630230436657
+    second: PacManAssets_Map_TileSet_3
+  - first:
+      213: -5087773106749558790
+    second: PacManAssets_Map_TileSet_4
+  - first:
+      213: 907497368578129344
+    second: PacManAssets_Map_TileSet_5
+  - first:
+      213: -8930494472208539981
+    second: PacManAssets_Map_TileSet_6
+  - first:
+      213: -7696538641265132049
+    second: PacManAssets_Map_TileSet_7
+  - first:
+      213: -7905647137595088649
+    second: PacManAssets_Map_TileSet_8
+  - first:
+      213: -2116055920438033337
+    second: PacManAssets_Map_TileSet_9
+  - first:
+      213: 8558502712132494358
+    second: PacManAssets_Map_TileSet_10
+  - first:
+      213: 4172203895786218551
+    second: PacManAssets_Map_TileSet_11
+  - first:
+      213: -1100658261904960225
+    second: PacManAssets_Map_TileSet_12
+  - first:
+      213: -1873383859305915233
+    second: PacManAssets_Map_TileSet_13
+  - first:
+      213: 167508673892211010
+    second: PacManAssets_Map_TileSet_14
+  - first:
+      213: 3911733541249047623
+    second: PacManAssets_Map_TileSet_15
+  - first:
+      213: 6203682171377388381
+    second: PacManAssets_Map_TileSet_16
+  - first:
+      213: -2620964920676395372
+    second: PacManAssets_Map_TileSet_17
+  - first:
+      213: -7026135441868199283
+    second: PacManAssets_Map_TileSet_18
+  - first:
+      213: 502416700223110271
+    second: PacManAssets_Map_TileSet_19
+  - first:
+      213: 4409379022381182778
+    second: PacManAssets_Map_TileSet_20
+  - first:
+      213: -2037216196902328569
+    second: PacManAssets_Map_TileSet_21
+  - first:
+      213: 4063942728550619699
+    second: PacManAssets_Map_TileSet_22
+  - first:
+      213: -7679835010304582206
+    second: PacManAssets_Map_TileSet_23
+  - first:
+      213: 5845684724963751006
+    second: PacManAssets_Map_TileSet_24
+  - first:
+      213: -4166018558750659725
+    second: PacManAssets_Map_TileSet_25
+  - first:
+      213: -3653707659759763113
+    second: PacManAssets_Map_TileSet_26
+  - first:
+      213: -4115695066651993041
+    second: PacManAssets_Map_TileSet_27
+  - first:
+      213: 4666451154191519287
+    second: PacManAssets_Map_TileSet_28
+  - first:
+      213: -2614400975848116125
+    second: PacManAssets_Map_TileSet_29
+  - first:
+      213: 6430937356994089915
+    second: PacManAssets_Map_TileSet_30
+  - first:
+      213: -7714424901227599917
+    second: PacManAssets_Map_TileSet_31
+  - first:
+      213: 151351684685824403
+    second: PacManAssets_Map_TileSet_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 304
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f45bf9296f82a8120800000000000000
+      internalID: 2416789189524698447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 160
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd42f716e0712e730800000000000000
+      internalID: 4026806367355348191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1eada5540037c1480800000000000000
+      internalID: -8927133916354389279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 112
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc4befbe805e9ef80800000000000000
+      internalID: -8076672630230436657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 112
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aff286ac0599469b0800000000000000
+      internalID: -5087773106749558790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_5
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 112
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cd73b07c04189c00800000000000000
+      internalID: 907497368578129344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_6
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 143
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3be9b63e792801480800000000000000
+      internalID: -8930494472208539981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_7
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 145
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fedf25f32e6603590800000000000000
+      internalID: -7696538641265132049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_8
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 129
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f0af0470df794290800000000000000
+      internalID: -7905647137595088649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_9
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 143
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 744cd690a5242a2e0800000000000000
+      internalID: -2116055920438033337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_10
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 145
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 614efdd2fd8e5c670800000000000000
+      internalID: 8558502712132494358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_11
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 137
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 734a6d28655a6e930800000000000000
+      internalID: 4172203895786218551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_12
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 128
+        width: 32
+        height: 32
+      alignment: 9
+      pivot: {x: 0.5063944, y: -0.19064188}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f155e00742da9b0f0800000000000000
+      internalID: -1100658261904960225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_13
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9cde1a3e476006e0800000000000000
+      internalID: -1873383859305915233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_14
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 129
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 249542c504c135200800000000000000
+      internalID: 167508673892211010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_15
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 129
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74c51263ee4494630800000000000000
+      internalID: 3911733541249047623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5b8f5cf018e71650800000000000000
+      internalID: 6203682171377388381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_17
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 69
+        width: 6
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 496d2568a4670abd0800000000000000
+      internalID: -2620964920676395372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_18
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 69
+        width: 6
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ae9abaa072e7e90800000000000000
+      internalID: -7026135441868199283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_19
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 103
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7cb502b351f8f600800000000000000
+      internalID: 502416700223110271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_20
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 103
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3fe615ebd2413d30800000000000000
+      internalID: 4409379022381182778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_21
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 107
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 707e6fc99aa5ab3e0800000000000000
+      internalID: -2037216196902328569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_22
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 79
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33a9ac24166066830800000000000000
+      internalID: 4063942728550619699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_23
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 79
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cddf256fbebb6590800000000000000
+      internalID: -7679835010304582206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_24
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 79
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e54346c194b002150800000000000000
+      internalID: 5845684724963751006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_25
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 32
+        width: 14
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37b6bfd71345f26c0800000000000000
+      internalID: -4166018558750659725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_26
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 49
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75145eadd3c6b4dc0800000000000000
+      internalID: -3653707659759763113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_27
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 33
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2c516c842d12e6c0800000000000000
+      internalID: -4115695066651993041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_28
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 32
+        width: 13
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73e0c4fc99092c040800000000000000
+      internalID: 4666451154191519287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_29
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 32
+        width: 13
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36073260a28c7bbd0800000000000000
+      internalID: -2614400975848116125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_30
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 49
+        width: 32
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb31c6024774f3950800000000000000
+      internalID: 6430937356994089915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_31
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 34
+        width: 32
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d7a6e3dc6bd0f490800000000000000
+      internalID: -7714424901227599917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_32
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 0
+        width: 10
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3910bd92e85b91200800000000000000
+      internalID: 151351684685824403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_33
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 160
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08893428f8d764341b9d16b150e51c02
+      internalID: 927231055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_34
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 64
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cc99dd970a1b3e489dee8d60621574f
+      internalID: 1846104291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_35
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 64
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5dcb028285fd99b4d93deed4d08a5431
+      internalID: -1810098619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_36
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 423e476039fdbfb469ffed79e918d502
+      internalID: 665366327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_37
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0ab0a5e2101ed14e99163d9c3e71405
+      internalID: -106440834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_38
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca1151d9406897944887ab1da27d55a4
+      internalID: -384382970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_39
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 915c33a1ce291ba48a37b02887fbf6f2
+      internalID: -952190239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_40
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcbe90508d5b6c04ebd0beea67da7e44
+      internalID: 44701671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_41
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0517f32576dc19a44972fac630b7b9ff
+      internalID: 1483559952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_42
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fcc4e9af742f7c2419376179c09b300d
+      internalID: 446623533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_43
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 176
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab58891ec1b5bb04481a24e3ce301540
+      internalID: 543405830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_44
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 176
+        width: 32
+        height: 32
+      alignment: 9
+      pivot: {x: -0.35007638, y: 0.45218372}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d5ab6a2242177ab48a0f6c364de03d9c
+      internalID: 724425289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_45
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 176
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b41111bdbafb5478ff49983dca9e5a
+      internalID: -1248275231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_46
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 128
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80e943a6e5e21cb41ae931d9087d1685
+      internalID: 358132371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_47
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03f782e2d8873794491ae67ba67a2c50
+      internalID: -1370889597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_48
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8501171f2d6976740b699fc192eb8f14
+      internalID: -795331389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_49
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49b0c1ebf7f2e9149841725c365579e5
+      internalID: -39985315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_50
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5df8e26d879d924fb00b0a1b2ac5c76
+      internalID: 2062004119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_51
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 632501a43081afb42a91bc18021142ba
+      internalID: 1019209183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets_Map_TileSet_52
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb825d36cb4ab3a439f4a7437422054d
+      internalID: 856958115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PacManAssets_Map_TileSet_0: 2416789189524698447
+      PacManAssets_Map_TileSet_1: 4026806367355348191
+      PacManAssets_Map_TileSet_10: 8558502712132494358
+      PacManAssets_Map_TileSet_11: 4172203895786218551
+      PacManAssets_Map_TileSet_12: -1100658261904960225
+      PacManAssets_Map_TileSet_13: -1873383859305915233
+      PacManAssets_Map_TileSet_14: 167508673892211010
+      PacManAssets_Map_TileSet_15: 3911733541249047623
+      PacManAssets_Map_TileSet_16: 6203682171377388381
+      PacManAssets_Map_TileSet_17: -2620964920676395372
+      PacManAssets_Map_TileSet_18: -7026135441868199283
+      PacManAssets_Map_TileSet_19: 502416700223110271
+      PacManAssets_Map_TileSet_2: -8927133916354389279
+      PacManAssets_Map_TileSet_20: 4409379022381182778
+      PacManAssets_Map_TileSet_21: -2037216196902328569
+      PacManAssets_Map_TileSet_22: 4063942728550619699
+      PacManAssets_Map_TileSet_23: -7679835010304582206
+      PacManAssets_Map_TileSet_24: 5845684724963751006
+      PacManAssets_Map_TileSet_25: -4166018558750659725
+      PacManAssets_Map_TileSet_26: -3653707659759763113
+      PacManAssets_Map_TileSet_27: -4115695066651993041
+      PacManAssets_Map_TileSet_28: 4666451154191519287
+      PacManAssets_Map_TileSet_29: -2614400975848116125
+      PacManAssets_Map_TileSet_3: -8076672630230436657
+      PacManAssets_Map_TileSet_30: 6430937356994089915
+      PacManAssets_Map_TileSet_31: -7714424901227599917
+      PacManAssets_Map_TileSet_32: 151351684685824403
+      PacManAssets_Map_TileSet_33: 927231055
+      PacManAssets_Map_TileSet_34: 1846104291
+      PacManAssets_Map_TileSet_35: -1810098619
+      PacManAssets_Map_TileSet_36: 665366327
+      PacManAssets_Map_TileSet_37: -106440834
+      PacManAssets_Map_TileSet_38: -384382970
+      PacManAssets_Map_TileSet_39: -952190239
+      PacManAssets_Map_TileSet_4: -5087773106749558790
+      PacManAssets_Map_TileSet_40: 44701671
+      PacManAssets_Map_TileSet_41: 1483559952
+      PacManAssets_Map_TileSet_42: 446623533
+      PacManAssets_Map_TileSet_43: 543405830
+      PacManAssets_Map_TileSet_44: 724425289
+      PacManAssets_Map_TileSet_45: -1248275231
+      PacManAssets_Map_TileSet_46: 358132371
+      PacManAssets_Map_TileSet_47: -1370889597
+      PacManAssets_Map_TileSet_48: -795331389
+      PacManAssets_Map_TileSet_49: -39985315
+      PacManAssets_Map_TileSet_5: 907497368578129344
+      PacManAssets_Map_TileSet_50: 2062004119
+      PacManAssets_Map_TileSet_51: 1019209183
+      PacManAssets_Map_TileSet_52: 856958115
+      PacManAssets_Map_TileSet_6: -8930494472208539981
+      PacManAssets_Map_TileSet_7: -7696538641265132049
+      PacManAssets_Map_TileSet_8: -7905647137595088649
+      PacManAssets_Map_TileSet_9: -2116055920438033337
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

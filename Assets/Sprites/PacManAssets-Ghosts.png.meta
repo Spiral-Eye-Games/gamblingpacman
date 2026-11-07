@@ -1,0 +1,1562 @@
+fileFormatVersion: 2
+guid: 4e7d2bdf4635d254b823321dd90032a6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 381283623888017297
+    second: PacManAssets-Ghosts_0
+  - first:
+      213: -3253392175215830856
+    second: PacManAssets-Ghosts_1
+  - first:
+      213: 7246146566921337503
+    second: PacManAssets-Ghosts_2
+  - first:
+      213: 307998135593467105
+    second: PacManAssets-Ghosts_3
+  - first:
+      213: -2303661810113249985
+    second: PacManAssets-Ghosts_4
+  - first:
+      213: -181716185359336551
+    second: PacManAssets-Ghosts_5
+  - first:
+      213: -1754333707212318202
+    second: PacManAssets-Ghosts_6
+  - first:
+      213: 3511476536034370308
+    second: PacManAssets-Ghosts_7
+  - first:
+      213: 6467407636116668806
+    second: PacManAssets-Ghosts_8
+  - first:
+      213: -1247623084937875608
+    second: PacManAssets-Ghosts_9
+  - first:
+      213: 2719305359124891700
+    second: PacManAssets-Ghosts_10
+  - first:
+      213: 2099028147098913081
+    second: PacManAssets-Ghosts_11
+  - first:
+      213: -1359674866251954181
+    second: PacManAssets-Ghosts_12
+  - first:
+      213: -3869456757534930575
+    second: PacManAssets-Ghosts_13
+  - first:
+      213: 663515610487507017
+    second: PacManAssets-Ghosts_14
+  - first:
+      213: 3503921547693165213
+    second: PacManAssets-Ghosts_15
+  - first:
+      213: -1902678809454797475
+    second: PacManAssets-Ghosts_16
+  - first:
+      213: -2836586714727776925
+    second: PacManAssets-Ghosts_17
+  - first:
+      213: 8271353103963018224
+    second: PacManAssets-Ghosts_18
+  - first:
+      213: 1150403333416558531
+    second: PacManAssets-Ghosts_19
+  - first:
+      213: 1246077535054790755
+    second: PacManAssets-Ghosts_20
+  - first:
+      213: -2196241067784273306
+    second: PacManAssets-Ghosts_21
+  - first:
+      213: 4319305588754860323
+    second: PacManAssets-Ghosts_22
+  - first:
+      213: 3190873894957520992
+    second: PacManAssets-Ghosts_23
+  - first:
+      213: 7377520460679356930
+    second: PacManAssets-Ghosts_24
+  - first:
+      213: -5327991088993867797
+    second: PacManAssets-Ghosts_25
+  - first:
+      213: -7939137456659928805
+    second: PacManAssets-Ghosts_26
+  - first:
+      213: 2341013464854485983
+    second: PacManAssets-Ghosts_27
+  - first:
+      213: -6358511529289959377
+    second: PacManAssets-Ghosts_28
+  - first:
+      213: 5679542324688457836
+    second: PacManAssets-Ghosts_29
+  - first:
+      213: -557796482903693206
+    second: PacManAssets-Ghosts_30
+  - first:
+      213: 919309189192511572
+    second: PacManAssets-Ghosts_31
+  - first:
+      213: 2792245117270376277
+    second: PacManAssets-Ghosts_32
+  - first:
+      213: -5759679951507691881
+    second: PacManAssets-Ghosts_33
+  - first:
+      213: 5087333952241970270
+    second: PacManAssets-Ghosts_34
+  - first:
+      213: 8325901679708724422
+    second: PacManAssets-Ghosts_35
+  - first:
+      213: 4729923248484099852
+    second: PacManAssets-Ghosts_36
+  - first:
+      213: 3558674217966680519
+    second: PacManAssets-Ghosts_37
+  - first:
+      213: -6793763387059298991
+    second: PacManAssets-Ghosts_38
+  - first:
+      213: 3691788628273630140
+    second: PacManAssets-Ghosts_39
+  - first:
+      213: -1834584773530405133
+    second: PacManAssets-Ghosts_40
+  - first:
+      213: -7639235448736627496
+    second: PacManAssets-Ghosts_41
+  - first:
+      213: -1902699380655275085
+    second: PacManAssets-Ghosts_42
+  - first:
+      213: -8898605176996530180
+    second: PacManAssets-Ghosts_43
+  - first:
+      213: 5622203826518958087
+    second: PacManAssets-Ghosts_44
+  - first:
+      213: -582885617062236676
+    second: PacManAssets-Ghosts_45
+  - first:
+      213: 7182275224226397532
+    second: PacManAssets-Ghosts_46
+  - first:
+      213: -3066706975321818218
+    second: PacManAssets-Ghosts_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 352
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 325
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 197d4809f679a4500800000000000000
+      internalID: 381283623888017297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_1
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 325
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b89939cd01a9d2d0800000000000000
+      internalID: -3253392175215830856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_2
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 325
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9a33cf29eb7f8460800000000000000
+      internalID: 7246146566921337503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_3
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 325
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ecf7872caa364400800000000000000
+      internalID: 307998135593467105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_4
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 293
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3df09df9cfb700e0800000000000000
+      internalID: -2303661810113249985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_5
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 293
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99bb7b9971a6a7df0800000000000000
+      internalID: -181716185359336551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_6
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 293
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60a9d14c9ca57a7e0800000000000000
+      internalID: -1754333707212318202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_7
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 293
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 403a27f0e454bb030800000000000000
+      internalID: 3511476536034370308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_8
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 261
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6810260baf8d0c950800000000000000
+      internalID: 6467407636116668806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_9
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 261
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f63b81a6d8faee0800000000000000
+      internalID: -1247623084937875608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_10
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 261
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438847e01d9ecb520800000000000000
+      internalID: 2719305359124891700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_11
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 261
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93980698afe312d10800000000000000
+      internalID: 2099028147098913081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_12
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 229
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf7860bb9e6712de0800000000000000
+      internalID: -1359674866251954181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_13
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 229
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 179456d849dec4ac0800000000000000
+      internalID: -3869456757534930575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_14
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 229
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 948c80aaee7453900800000000000000
+      internalID: 663515610487507017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_15
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 229
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a8613451e60a030800000000000000
+      internalID: 3503921547693165213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_16
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 197
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5d98c024b35895e0800000000000000
+      internalID: -1902678809454797475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_17
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 197
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36dfe0e696b62a8d0800000000000000
+      internalID: -2836586714727776925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_18
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 197
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f35a8513dfb9c270800000000000000
+      internalID: 8271353103963018224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_19
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 197
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cf18b49cbd07ff00800000000000000
+      internalID: 1150403333416558531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_20
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 165
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36009878ae4fa4110800000000000000
+      internalID: 1246077535054790755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_21
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 165
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 662089192626581e0800000000000000
+      internalID: -2196241067784273306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_22
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 165
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 329c71e5c8141fb30800000000000000
+      internalID: 4319305588754860323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_23
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 165
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0689208c6e2484c20800000000000000
+      internalID: 3190873894957520992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_24
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 133
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20228fd65c7326660800000000000000
+      internalID: 7377520460679356930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_25
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 133
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be7e21e555c2f06b0800000000000000
+      internalID: -5327991088993867797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_26
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 133
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1969c8eb8482d190800000000000000
+      internalID: -7939137456659928805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_27
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 133
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdbde03d753fc7020800000000000000
+      internalID: 2341013464854485983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_28
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 101
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f283274f37702c7a0800000000000000
+      internalID: -6358511529289959377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_29
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 101
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c601add17a9c1de40800000000000000
+      internalID: 5679542324688457836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_30
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 101
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a68209bdd0f4248f0800000000000000
+      internalID: -557796482903693206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_31
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 101
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 450729c36da02cc00800000000000000
+      internalID: 919309189192511572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_32
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 69
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55f38b4e32c00c620800000000000000
+      internalID: 2792245117270376277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_33
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 69
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 796e176a9918110b0800000000000000
+      internalID: -5759679951507691881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_34
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 69
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5caa259647d99640800000000000000
+      internalID: 5087333952241970270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_35
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 69
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ccddd5177b8b8370800000000000000
+      internalID: 8325901679708724422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_36
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 37
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c07a1c0622014a140800000000000000
+      internalID: 4729923248484099852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_37
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 37
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c9be39b853f26130800000000000000
+      internalID: 3558674217966680519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_38
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 37
+        width: 25
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15d9642c134b7b1a0800000000000000
+      internalID: -6793763387059298991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_39
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 37
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbb831e823edb3330800000000000000
+      internalID: 3691788628273630140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f631675ede3a86e0800000000000000
+      internalID: -1834584773530405133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_41
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d44b7275dbfbf590800000000000000
+      internalID: -7639235448736627496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_42
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b3cfa58ef04895e0800000000000000
+      internalID: -1902699380655275085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_43
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf77ba40dbdc18480800000000000000
+      internalID: -8898605176996530180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_44
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 700218ea794160e40800000000000000
+      internalID: 5622203826518958087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_45
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfd225a9e9c29e7f0800000000000000
+      internalID: -582885617062236676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_46
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5d7a1b53419ca360800000000000000
+      internalID: 7182275224226397532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_47
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69bfab9014ed075d0800000000000000
+      internalID: -3066706975321818218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_48
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7107f1cdad064524bba330eefb834e44
+      internalID: -857595023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_49
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22b89e4e596bb37409d626c01ca6e949
+      internalID: 1375542422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_50
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bca52a46699b2c4aa0570726f488478
+      internalID: -95549347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_51
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0d1e8596026dbe4fa9d9c5f95ec7cbb
+      internalID: -1523013110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_52
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 219d4b2a858c5fd4e8dfa3801e0b74c7
+      internalID: 1665976661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_53
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef7cfd4a59fa0c348afe07a3cde84f99
+      internalID: -1499664465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_54
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23815e0604944db4cbea1d5c773695a4
+      internalID: -1493013615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PacManAssets-Ghosts_55
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 16
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8534a883a9b9c744789e9a4feb403080
+      internalID: 263664615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      PacManAssets-Ghosts_0: 381283623888017297
+      PacManAssets-Ghosts_1: -3253392175215830856
+      PacManAssets-Ghosts_10: 2719305359124891700
+      PacManAssets-Ghosts_11: 2099028147098913081
+      PacManAssets-Ghosts_12: -1359674866251954181
+      PacManAssets-Ghosts_13: -3869456757534930575
+      PacManAssets-Ghosts_14: 663515610487507017
+      PacManAssets-Ghosts_15: 3503921547693165213
+      PacManAssets-Ghosts_16: -1902678809454797475
+      PacManAssets-Ghosts_17: -2836586714727776925
+      PacManAssets-Ghosts_18: 8271353103963018224
+      PacManAssets-Ghosts_19: 1150403333416558531
+      PacManAssets-Ghosts_2: 7246146566921337503
+      PacManAssets-Ghosts_20: 1246077535054790755
+      PacManAssets-Ghosts_21: -2196241067784273306
+      PacManAssets-Ghosts_22: 4319305588754860323
+      PacManAssets-Ghosts_23: 3190873894957520992
+      PacManAssets-Ghosts_24: 7377520460679356930
+      PacManAssets-Ghosts_25: -5327991088993867797
+      PacManAssets-Ghosts_26: -7939137456659928805
+      PacManAssets-Ghosts_27: 2341013464854485983
+      PacManAssets-Ghosts_28: -6358511529289959377
+      PacManAssets-Ghosts_29: 5679542324688457836
+      PacManAssets-Ghosts_3: 307998135593467105
+      PacManAssets-Ghosts_30: -557796482903693206
+      PacManAssets-Ghosts_31: 919309189192511572
+      PacManAssets-Ghosts_32: 2792245117270376277
+      PacManAssets-Ghosts_33: -5759679951507691881
+      PacManAssets-Ghosts_34: 5087333952241970270
+      PacManAssets-Ghosts_35: 8325901679708724422
+      PacManAssets-Ghosts_36: 4729923248484099852
+      PacManAssets-Ghosts_37: 3558674217966680519
+      PacManAssets-Ghosts_38: -6793763387059298991
+      PacManAssets-Ghosts_39: 3691788628273630140
+      PacManAssets-Ghosts_4: -2303661810113249985
+      PacManAssets-Ghosts_40: -1834584773530405133
+      PacManAssets-Ghosts_41: -7639235448736627496
+      PacManAssets-Ghosts_42: -1902699380655275085
+      PacManAssets-Ghosts_43: -8898605176996530180
+      PacManAssets-Ghosts_44: 5622203826518958087
+      PacManAssets-Ghosts_45: -582885617062236676
+      PacManAssets-Ghosts_46: 7182275224226397532
+      PacManAssets-Ghosts_47: -3066706975321818218
+      PacManAssets-Ghosts_48: -857595023
+      PacManAssets-Ghosts_49: 1375542422
+      PacManAssets-Ghosts_5: -181716185359336551
+      PacManAssets-Ghosts_50: -95549347
+      PacManAssets-Ghosts_51: -1523013110
+      PacManAssets-Ghosts_52: 1665976661
+      PacManAssets-Ghosts_53: -1499664465
+      PacManAssets-Ghosts_54: -1493013615
+      PacManAssets-Ghosts_55: 263664615
+      PacManAssets-Ghosts_6: -1754333707212318202
+      PacManAssets-Ghosts_7: 3511476536034370308
+      PacManAssets-Ghosts_8: 6467407636116668806
+      PacManAssets-Ghosts_9: -1247623084937875608
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

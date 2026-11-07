@@ -1,9 +1,65 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class AStarPathfinding2D
 {
     const float CornerClearance = 0.025f;
+
+    internal static bool TryFindLinkedPath(Rect arena, IReadOnlyList<Vector2> nodes,
+        IReadOnlyList<int>[] neighbors, int start, int destination, LayerMask walls, float radius,
+        List<int> path) =>
+        TryFindLinkedPath(arena, nodes, neighbors, start, node => node == destination,
+            nodes[destination], walls, radius, path);
+
+    internal static bool TryFindLinkedPath(Rect arena, IReadOnlyList<Vector2> nodes,
+        IReadOnlyList<int>[] neighbors, int start, Predicate<int> reachedGoal, Vector2? goal,
+        LayerMask walls, float radius,
+        List<int> path)
+    {
+        path.Clear();
+        if (!IsWalkable(nodes[start], arena, walls, radius))
+            return false;
+
+        var frontier = new NodePriorityQueue(nodes.Count);
+        var costSoFar = new float[nodes.Count];
+        var cameFrom = new int[nodes.Count];
+        for (int i = 0; i < nodes.Count; i++)
+            costSoFar[i] = float.PositiveInfinity;
+
+        costSoFar[start] = 0f;
+        cameFrom[start] = -1;
+        frontier.EnqueueOrDecrease(start, Estimate(start));
+
+        while (frontier.TryDequeue(out int current))
+        {
+            if (reachedGoal(current))
+            {
+                for (int node = current; node >= 0; node = cameFrom[node])
+                    path.Add(node);
+                path.Reverse();
+                return true;
+            }
+
+            Vector2 position = nodes[current];
+            foreach (int next in neighbors[current])
+            {
+                Vector2 point = nodes[next];
+                float cost = costSoFar[current] + Vector2.Distance(position, point);
+                if (cost >= costSoFar[next] || !IsWalkable(point, arena, walls, radius) ||
+                    !SegmentIsClear(position, point, radius, walls))
+                    continue;
+
+                costSoFar[next] = cost;
+                cameFrom[next] = current;
+                frontier.EnqueueOrDecrease(next, cost + Estimate(next));
+            }
+        }
+
+        return false;
+
+        float Estimate(int node) => goal.HasValue ? Vector2.Distance(nodes[node], goal.Value) : 0f;
+    }
 
     // El inicio y el destino se conectan a los nodos visibles para esta búsqueda.
     public static bool TryFindPath(Rect arena, IReadOnlyList<Vector2> nodes,

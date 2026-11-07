@@ -16,7 +16,7 @@ public class Steering : MonoBehaviour, IAgentMotor, IMovementTrace2D
     public Vector2 Position => transform.position;
     public Vector2 FrameStartPosition { get; private set; }
     public Vector2 Velocity { get; private set; }
-    public float MaxSpeed => Time.time < _boostUntil
+    public virtual float MaxSpeed => Time.time < _boostUntil
         ? _maxSpeed * _boostMultiplier : _maxSpeed;
 
     public void ConfigureWallCollision(LayerMask walls, float bodyRadius)
@@ -44,11 +44,14 @@ public class Steering : MonoBehaviour, IAgentMotor, IMovementTrace2D
         Velocity = (next - FrameStartPosition) / dt;
 
         if (_faceVelocity && Velocity.sqrMagnitude > 0.0001f)
-        {
-            float angle = Mathf.Atan2(Velocity.y, Velocity.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f + _spriteAngleOffset);
-        }
+            FaceVelocity();
         return true;
+    }
+
+    protected virtual void FaceVelocity()
+    {
+        float angle = Mathf.Atan2(Velocity.y, Velocity.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f + _spriteAngleOffset);
     }
 
     public void Stop()

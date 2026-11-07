@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] InputActionReference _move;
     [SerializeField, Min(0f)] float _speed = 5f;
     [SerializeField, Min(1f)] float _turnSpeed = 270f;
+    [SerializeField, Tooltip("Dirección del frente del sprite con rotación cero: 0 = derecha, 90 = arriba.")]
+    float _spriteForwardAngle = 90f;
     [SerializeField] LayerMask _walls;
     [SerializeField, Min(0.01f)] float _bodyRadius = 0.3f;
 
@@ -71,13 +73,13 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        float target = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg - 90f;
+        float target = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg - _spriteForwardAngle;
         float angle = Mathf.MoveTowardsAngle(_body.rotation, target, _turnSpeed * Time.fixedDeltaTime);
         _body.rotation = angle;
 
         // El jugador pide avanzar de frente. El contacto con paredes lo resuelve el Rigidbody2D.
-        float radians = angle * Mathf.Deg2Rad;
-        Vector2 forward = new Vector2(-Mathf.Sin(radians), Mathf.Cos(radians));
+        float radians = (angle + _spriteForwardAngle) * Mathf.Deg2Rad;
+        Vector2 forward = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
         _body.linearVelocity = forward * _speed;
     }
 }

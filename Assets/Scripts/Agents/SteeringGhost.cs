@@ -3,6 +3,24 @@ using UnityEngine;
 // Mantiene la referencia del motor en los prefabs de fantasmas.
 public class SteeringGhost : Steering
 {
+    [SerializeField, Min(1f)] float _fleeSpeedMultiplier = 1.5f;
+
+    SpriteRenderer _sprite;
+
+    internal bool IsFleeing { get; set; }
+    public override float MaxSpeed => IsFleeing ? base.MaxSpeed * _fleeSpeedMultiplier : base.MaxSpeed;
+
+    void Awake()
+    {
+        _sprite = GetComponent<SpriteRenderer>();
+    }
+
+    protected override void FaceVelocity()
+    {
+        if (_sprite == null || Mathf.Abs(Velocity.x) <= 0.01f) return;
+        _sprite.flipX = Velocity.x < 0f;
+    }
+
     internal void ClearShallowWallOverlap(Rect arena, LayerMask walls, float radius)
     {
         Vector2 position = Position;
