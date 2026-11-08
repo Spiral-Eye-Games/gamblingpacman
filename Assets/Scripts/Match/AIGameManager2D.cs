@@ -7,63 +7,6 @@ public class AIGameManager2D : MonoBehaviour
 {
     public static AIGameManager2D Instance { get; private set; }
 
-    const float MinDistance = 0.0001f;
-
-    //Zona de entrada que teletransporta a una salida, modificable en el inspector
-    [Serializable]
-    public class WrapArea
-    {
-        [SerializeField] Vector2 _entryLocalCenter;
-        [SerializeField] Vector2 _entrySize = new Vector2(1.1f, 0.5f);
-        [SerializeField] Vector2 _exitLocalPosition;
-        [SerializeField] bool _keepX;
-        [SerializeField] bool _keepY = true;
-
-        public Vector2 EntryLocalCenter => _entryLocalCenter;
-        public Vector2 EntrySize => _entrySize;
-        public Vector2 ExitLocalPosition => _exitLocalPosition;
-
-        //conserva en la salida el desplazamiento en X y/o Y con el que se entró.
-        public Vector2 ExitOffset(Vector2 entryOffset)
-        {
-            return new Vector2(_keepX ? entryOffset.x : 0f,
-                _keepY ? entryOffset.y : 0f);
-        }
-
-        public void ClampSize()
-        {
-            _entrySize.x = Mathf.Max(0.01f, _entrySize.x);
-            _entrySize.y = Mathf.Max(0.01f, _entrySize.y);
-        }
-
-        public bool TryWrap(Vector2 origin, Vector2 previousPosition, Vector2 position,
-            out Vector2 exitPosition)
-        {
-            exitPosition = position;
-            Vector2 center = origin + _entryLocalCenter;
-            Bounds entry = new Bounds(center, new Vector3(_entrySize.x, _entrySize.y, 1f));
-            Vector2 crossingPosition = position;
-
-            if (!entry.Contains(position))
-            {
-                Vector2 movement = position - previousPosition;
-                float distance = movement.magnitude;
-                if (distance < MinDistance) return false;
-
-                Ray ray = new Ray(previousPosition, movement / distance);
-                if (!entry.IntersectRay(ray, out float hitDistance) || hitDistance > distance)
-                    return false;
-                crossingPosition = previousPosition + movement / distance * hitDistance;
-            }
-
-            exitPosition = origin + _exitLocalPosition + ExitOffset(crossingPosition - center);
-            return true;
-        }
-    }
-
-    [Header("Zonas de wraparound")]
-    [SerializeField] WrapArea[] _wrapAreas = new WrapArea[0];
-
     [Header("Arena")]
     [SerializeField] Vector2 _arenaSize = new Vector2(16f, 9f);
     [SerializeField] Vector2[] _navigationNodes = Array.Empty<Vector2>();
@@ -147,7 +90,7 @@ public class AIGameManager2D : MonoBehaviour
                 HunterFSM2D ghost = _hunters[j];
                 if (ghost == null || !ghost.IsAlive) continue;
                 float radius = pacmanHunts ? boid.CaptureRadius : ghost.CaptureRadius;
-                if (!CaptureContact2D.PathsTouch(boid.Motor, ghost.Motor, radius, Time.deltaTime))
+                if (!CaptureContact2D.PathsTouch(boid.Motor, ghost.Motor, radius))
                     continue;
 
                 if (pacmanHunts) ghost.CaughtByPacman();
@@ -273,7 +216,7 @@ public class AIGameManager2D : MonoBehaviour
         return nearest;
     }
 
-    // --- Arena y túneles ---
+    // --- Arena ---
 
     public bool IsInsideArena(Vector2 position, float margin)
     {
@@ -283,24 +226,7 @@ public class AIGameManager2D : MonoBehaviour
                Mathf.Abs(offset.y) + margin <= half.y;
     }
 
-    //Solo teletransporta si el paso de este frame entra o cruza una zona de entrada.
-    public Vector2 ApplyWrapAreas(Vector2 previousPosition, Vector2 position)
-    {
-        foreach (WrapArea area in _wrapAreas)
-        {
-            if (area.TryWrap(transform.position, previousPosition, position, out Vector2 exit))
-                return exit;
-        }
-
-        return position;
-    }
-
     //--- Editor ---
-
-    void OnValidate()
-    {
-        foreach (WrapArea area in _wrapAreas) area.ClampSize();
-    }
 
     void OnDrawGizmosSelected()
     {
@@ -310,16 +236,5 @@ public class AIGameManager2D : MonoBehaviour
         Gizmos.color = Color.magenta;
         foreach (Vector2 node in _navigationNodes)
             Gizmos.DrawSphere((Vector2)transform.position + node, 0.06f);
-
-        foreach (WrapArea area in _wrapAreas)
-        {
-            Vector2 entry = (Vector2)transform.position + area.EntryLocalCenter;
-            Vector2 exit = (Vector2)transform.position + area.ExitLocalPosition;
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireCube(entry, area.EntrySize);
-            Gizmos.DrawLine(entry, exit);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(exit, 0.15f);
-        }
     }
 }

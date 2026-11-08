@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // Recogida de comida y captura de Pac-Man. PlayerMovement controla su movimiento.
@@ -9,6 +10,9 @@ public class BoidAgent2D : MonoBehaviour
     [SerializeField, Min(0.01f)] float _pickupRadius = 0.35f;
 
     Steering _motor;
+    Animator _animator;
+    PlayerMovement _movement;
+    Rigidbody2D _body;
     bool _alive = true;
 
     public Steering Motor => _motor;
@@ -19,9 +23,11 @@ public class BoidAgent2D : MonoBehaviour
     void Awake()
     {
         _motor = GetComponent<Steering>();
-        var movement = GetComponent<PlayerMovement>();
-        BodyRadius = movement.BodyRadius;
-        _motor.ConfigureWallCollision(movement.Walls, BodyRadius);
+        _animator = GetComponent<Animator>();
+        _movement = GetComponent<PlayerMovement>();
+        _body = GetComponent<Rigidbody2D>();
+        BodyRadius = _movement.BodyRadius;
+        _motor.ConfigureWallCollision(_movement.Walls, BodyRadius);
     }
 
     void Start()
@@ -60,7 +66,18 @@ public class BoidAgent2D : MonoBehaviour
     {
         if (!_alive) return;
         _alive = false;
-        _manager.BoidCaught();
+        _movement.enabled = false;
+        _motor.Stop();
+        _body.linearVelocity = Vector2.zero;
+        _body.simulated = false;
+        StartCoroutine(Die());
+    }
+
+    IEnumerator Die()
+    {
+        yield return AgentDeathAnimation2D.Play(_animator);
+        // El resultado y la pantalla de continuar se habilitan después de la animación.
+        if (_manager != null) _manager.BoidCaught();
         gameObject.SetActive(false);
     }
 }

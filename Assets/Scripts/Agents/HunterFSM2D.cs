@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 // Se conserva el nombre para mantener la referencia serializada del prefab.
@@ -6,6 +7,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class HunterFSM2D : MonoBehaviour
 {
+    static readonly int IsHuntingParameter = Animator.StringToHash("IsHunting");
+
     [SerializeField] AIGameManager2D _manager;
     [SerializeField, Min(0.1f)] float _viewRadius = 5f;
     [SerializeField, Min(0.01f)] float _catchRadius = 0.45f;
@@ -22,6 +25,7 @@ public class HunterFSM2D : MonoBehaviour
     int _patrolEntryNode = -1;
 
     HunterPatrol2D _patrol;
+    Animator _animator;
     SteeringGhost _motor;
     AStarRoute2D _route;
     BoidAgent2D _visibleTarget;
@@ -34,6 +38,7 @@ public class HunterFSM2D : MonoBehaviour
 
     void Awake()
     {
+        _animator = GetComponent<Animator>();
         _motor = GetComponent<SteeringGhost>();
         _motor.ConfigureWallCollision(_walls, _bodyRadius);
         _route = new AStarRoute2D(_motor, _walls, _bodyRadius);
@@ -68,14 +73,19 @@ public class HunterFSM2D : MonoBehaviour
 
     void Update()
     {
-        if (_manager == null || !_manager.IsRunning || !_alive)
+        if (!_alive) return;
+
+        // La apariencia depende del rol global, incluso si el fantasma no ve a Pac-Man.
+        bool pacmanHunts = _manager != null && _manager.Roles != null && _manager.Roles.PacmanIsHunter;
+        if (_animator != null) _animator.SetBool(IsHuntingParameter, !pacmanHunts);
+
+        if (_manager == null || !_manager.IsRunning)
         {
             _motor.Stop();
             return;
         }
 
         Vector2 position = _motor.Position;
-        bool pacmanHunts = _manager.Roles.PacmanIsHunter;
         // El motor es dueño de su desplazamiento. Un cambio externo invalida la ruta.
         if (!position.Equals(_lastPosition) || (_motor.IsFleeing && !pacmanHunts))
             ReturnToPatrol();
@@ -159,7 +169,15 @@ public class HunterFSM2D : MonoBehaviour
         if (!_alive || _manager == null || _manager.Roles == null ||
             !_manager.Roles.PacmanIsHunter) return;
         _alive = false;
+        _route.Clear();
+        _motor.IsFleeing = false;
         _motor.Stop();
+        StartCoroutine(Die());
+    }
+
+    IEnumerator Die()
+    {
+        yield return AgentDeathAnimation2D.Play(_animator);
         gameObject.SetActive(false);
     }
 

@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField, Min(0.01f)] float _bodyRadius = 0.3f;
 
     Rigidbody2D _body;
+    Animator _animator;
     PhysicsMaterial2D _contactMaterial;
     Vector2 _input;
 
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
         _body.bodyType = RigidbodyType2D.Dynamic;
         _body.gravityScale = 0f;
         _body.freezeRotation = true;
@@ -61,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         if (_move != null) _move.action?.Disable();
         _input = Vector2.zero;
         if (_body != null) _body.linearVelocity = Vector2.zero;
+        if (_animator != null) _animator.speed = 0f;
     }
 
     void OnDestroy()
@@ -109,6 +112,12 @@ public class PlayerMovement : MonoBehaviour
         float radians = (angle + _spriteForwardAngle) * Mathf.Deg2Rad;
         Vector2 forward = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
         _body.linearVelocity = forward * _speed;
+    }
+
+    void LateUpdate()
+    {
+        if (_animator != null)
+            _animator.speed = CanMove && _body.linearVelocity.sqrMagnitude > 0.0001f ? 1f : 0f;
     }
 
     //memento (foto de posición y rotación)*

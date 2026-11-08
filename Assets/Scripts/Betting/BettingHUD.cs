@@ -1,87 +1,128 @@
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 // Vista del Canvas. Traduce los controles a acciones del sistema de apuestas.
 public class BettingHUD : MonoBehaviour
 {
-    [Header("Sistemas")]
-    [SerializeField] AIGameManager2D _match;
-    [SerializeField] BettingManager _betting;
-    [SerializeField] CoinFlipBooster _coin;
+    [SerializeField, Tooltip("Canvas con los grupos Safe Area/Partida y Safe Area/Apuestas.")]
+    Canvas _hudCanvas;
 
-    [Header("Estado de la partida")]
-    [SerializeField] Text _matchStateText;
-    [SerializeField] Text _phaseText;
-    [SerializeField] Text _countsText;
+    AIGameManager2D _match;
+    BettingManager _betting;
+    CoinFlipBooster _coin;
 
-    [Header("Apuestas")]
-    [SerializeField] Text _balanceText;
-    [SerializeField] Text _betSummaryText;
-    [SerializeField] Text _coinPriceText;
-    [SerializeField] Text _coinResultText;
-    [SerializeField] Text _runningText;
-    [SerializeField] Text _outcomeText;
-    [SerializeField] Text _messageText;
-    [SerializeField] InputField _amountInput;
+    TMP_Text _matchStateText;
+    TMP_Text _phaseText;
+    TMP_Text _countsText;
+    TMP_Text _balanceText;
+    TMP_Text _betSummaryText;
+    TMP_Text _coinPriceText;
+    TMP_Text _coinResultText;
+    TMP_Text _runningText;
+    TMP_Text _outcomeText;
+    TMP_Text _messageText;
+    TMP_InputField _amountInput;
 
-    [Header("Botones")]
-    [SerializeField] Button _betPacmanButton;
-    [SerializeField] Button _betGhostsButton;
-    [SerializeField] Button _headsButton;
-    [SerializeField] Button _tailsButton;
-    [SerializeField] Button _startButton;
-    [SerializeField] Button _nextRoundButton;
-    [SerializeField] Button _retryButton; // aparece al ganar o perder el juego
+    Button _headsButton;
+    Button _tailsButton;
+    Button _nextRoundButton;
+    Button _retryButton; // aparece al ganar o perder el juego
 
-    [Header("Grupos de la interfaz")]
-    [SerializeField] GameObject _bettingPanel;
-    [SerializeField] GameObject _betEntryGroup;
-    [SerializeField] GameObject _beforeRoundGroup;
-    [SerializeField] GameObject _coinChoiceGroup;
-    [SerializeField] GameObject _runningGroup;
-    [SerializeField] GameObject _finishedGroup;
+    GameObject _bettingPanel;
+    GameObject _betEntryGroup;
+    GameObject _beforeRoundGroup;
+    GameObject _coinChoiceGroup;
+    GameObject _runningGroup;
+    GameObject _finishedGroup;
 
     string _message = "Elegí un monto y un bando.";
     bool _initialized;
 
     void Start()
     {
-        if (_match == null) _match = AIGameManager2D.Instance;
-        if (_betting == null) _betting = BettingManager.Instance;
-        if (_coin == null && _betting != null)
+        _match = AIGameManager2D.Instance;
+        _betting = BettingManager.Instance;
+        if (_betting != null)
             _coin = _betting.GetComponent<CoinFlipBooster>();
 
-        if (_match == null || _betting == null || _amountInput == null ||
-            _betPacmanButton == null || _betGhostsButton == null ||
-            _headsButton == null || _tailsButton == null ||
-            _startButton == null || _nextRoundButton == null)
+        if (_match == null || _betting == null || _hudCanvas == null)
         {
-            Debug.LogError("BettingHUD necesita las referencias del HUD Canvas.", this);
+            Debug.LogError("BettingHUD necesita un HUD Canvas, AIGameManager2D y BettingManager en la escena.", this);
             enabled = false;
             return;
         }
 
-        _amountInput.contentType = InputField.ContentType.IntegerNumber;
+        try
+        {
+            BindUI();
+        }
+        catch (InvalidOperationException exception)
+        {
+            Debug.LogError(exception.Message, this);
+            enabled = false;
+            return;
+        }
+
+        _amountInput.contentType = TMP_InputField.ContentType.IntegerNumber;
         _amountInput.characterLimit = 8;
         if (string.IsNullOrEmpty(_amountInput.text)) _amountInput.text = "100";
         _initialized = true;
-        Connect();
+        ConnectStateEvents();
+    }
+
+    // Transform.Find también encuentra hijos de grupos desactivados. Solo se busca al iniciar.
+    void BindUI()
+    {
+        Transform matchPanel = FindUI<RectTransform>(_hudCanvas.transform, "Safe Area/Partida");
+        Transform bettingPanel = FindUI<RectTransform>(_hudCanvas.transform, "Safe Area/Apuestas");
+        Transform betEntry = FindUI<RectTransform>(bettingPanel, "Elegir apuesta");
+        Transform beforeRound = FindUI<RectTransform>(bettingPanel, "Antes de iniciar");
+        Transform coinChoice = FindUI<RectTransform>(beforeRound, "Elegir moneda");
+        Transform running = FindUI<RectTransform>(bettingPanel, "Ronda en curso");
+        Transform finished = FindUI<RectTransform>(bettingPanel, "Ronda terminada");
+
+        _matchStateText = FindUI<TMP_Text>(matchPanel, "Estado");
+        _phaseText = FindUI<TMP_Text>(matchPanel, "Cazador actual");
+        _countsText = FindUI<TMP_Text>(matchPanel, "Contadores");
+        _balanceText = FindUI<TMP_Text>(bettingPanel, "Saldo y meta");
+        _betSummaryText = FindUI<TMP_Text>(beforeRound, "Apuesta confirmada");
+        _coinPriceText = FindUI<TMP_Text>(beforeRound, "Precio moneda");
+        _coinResultText = FindUI<TMP_Text>(beforeRound, "Resultado moneda");
+        _runningText = FindUI<TMP_Text>(running, "Texto ronda");
+        _outcomeText = FindUI<TMP_Text>(finished, "Resultado");
+        _messageText = FindUI<TMP_Text>(bettingPanel, "Mensaje");
+        _amountInput = FindUI<TMP_InputField>(betEntry, "Monto");
+
+        _headsButton = FindUI<Button>(coinChoice, "Cara");
+        _tailsButton = FindUI<Button>(coinChoice, "Cruz");
+        _nextRoundButton = FindUI<Button>(finished, "Siguiente ronda");
+        _retryButton = FindUI<Button>(finished, "RETRY");
+
+        _bettingPanel = bettingPanel.gameObject;
+        _betEntryGroup = betEntry.gameObject;
+        _beforeRoundGroup = beforeRound.gameObject;
+        _coinChoiceGroup = coinChoice.gameObject;
+        _runningGroup = running.gameObject;
+        _finishedGroup = finished.gameObject;
+    }
+
+    static T FindUI<T>(Transform root, string path) where T : Component
+    {
+        Transform child = root.Find(path);
+        if (child != null && child.TryGetComponent(out T component)) return component;
+        throw new InvalidOperationException(
+            $"BettingHUD: falta {typeof(T).Name} en '{root.name}/{path}'. Revisá la jerarquía del HUD Canvas.");
     }
 
     void OnEnable()
     {
-        if (_initialized) Connect();
+        if (_initialized) ConnectStateEvents();
     }
 
-    void Connect()
+    void ConnectStateEvents()
     {
-        _betPacmanButton.onClick.AddListener(BetPacman);
-        _betGhostsButton.onClick.AddListener(BetGhosts);
-        _headsButton.onClick.AddListener(ChooseHeads);
-        _tailsButton.onClick.AddListener(ChooseTails);
-        _startButton.onClick.AddListener(StartRound);
-        _nextRoundButton.onClick.AddListener(NextRound);
-        if (_retryButton != null) _retryButton.onClick.AddListener(Retry);
         if (_betting != null) _betting.StateChanged += Refresh;
         if (_coin != null) _coin.Changed += RefreshBetting;
         Refresh();
@@ -91,13 +132,6 @@ public class BettingHUD : MonoBehaviour
     {
         if (!_initialized) return;
 
-        if (_betPacmanButton != null) _betPacmanButton.onClick.RemoveListener(BetPacman);
-        if (_betGhostsButton != null) _betGhostsButton.onClick.RemoveListener(BetGhosts);
-        if (_headsButton != null) _headsButton.onClick.RemoveListener(ChooseHeads);
-        if (_tailsButton != null) _tailsButton.onClick.RemoveListener(ChooseTails);
-        if (_startButton != null) _startButton.onClick.RemoveListener(StartRound);
-        if (_nextRoundButton != null) _nextRoundButton.onClick.RemoveListener(NextRound);
-        if (_retryButton != null) _retryButton.onClick.RemoveListener(Retry);
         if (_betting != null) _betting.StateChanged -= Refresh;
         if (_coin != null) _coin.Changed -= RefreshBetting;
     }
@@ -189,7 +223,7 @@ public class BettingHUD : MonoBehaviour
         }
     }
 
-    static void SetText(Text label, string value)
+    static void SetText(TMP_Text label, string value)
     {
         if (label != null && label.text != value) label.text = value;
     }
@@ -199,11 +233,12 @@ public class BettingHUD : MonoBehaviour
         if (target != null && target.activeSelf != value) target.SetActive(value);
     }
 
-    void Retry() { _betting.Retry(); }
-    void BetPacman() { PlaceBet(MatchSide.Pacman); }
-    void BetGhosts() { PlaceBet(MatchSide.Ghosts); }
-    void ChooseHeads() { Flip(true); }
-    void ChooseTails() { Flip(false); }
+    // Acciones públicas asignadas en On Click() de cada Button en la escena.
+    public void Retry() { _betting.Retry(); }
+    public void BetPacman() { PlaceBet(MatchSide.Pacman); }
+    public void BetGhosts() { PlaceBet(MatchSide.Ghosts); }
+    public void ChooseHeads() { Flip(true); }
+    public void ChooseTails() { Flip(false); }
 
     void PlaceBet(MatchSide side)
     {
@@ -223,13 +258,13 @@ public class BettingHUD : MonoBehaviour
         Refresh();
     }
 
-    void StartRound()
+    public void StartRound()
     {
         _betting.TryStartRound(out _message);
         Refresh();
     }
 
-    void NextRound()
+    public void NextRound()
     {
         if (!_betting.NextRound())
         {
