@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _move: {fileID: -1680190386980627800, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  _speed: 5
+  _speed: 3
   _turnSpeed: 320
   _spriteForwardAngle: 0
   _walls:

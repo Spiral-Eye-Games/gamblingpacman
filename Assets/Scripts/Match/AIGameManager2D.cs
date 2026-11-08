@@ -21,6 +21,11 @@ public class AIGameManager2D : MonoBehaviour
     bool _running;
     bool _finished;
     MatchSide _winner;
+    double _levelStartedAt;
+    float _elapsedTime;
+    bool _timerRunning;
+    bool _playerDied;
+    string _bestTimeKey;
 
     public event Action<MatchSide> MatchFinished;
 
@@ -34,6 +39,9 @@ public class AIGameManager2D : MonoBehaviour
     public bool IsRunning => _running;
     public bool IsFinished => _finished;
     public MatchSide Winner => _winner;
+    public float ElapsedTime => _timerRunning
+        ? (float)Math.Max(0d, Time.timeAsDouble - _levelStartedAt) : _elapsedTime;
+    public float? BestTime { get; private set; }
 
     void Awake()
     {
@@ -44,6 +52,9 @@ public class AIGameManager2D : MonoBehaviour
             return;
         }
         Instance = this;
+        _bestTimeKey = "BestLevelTime." + gameObject.scene.path;
+        float savedTime = PlayerPrefs.GetFloat(_bestTimeKey, -1f);
+        BestTime = savedTime >= 0f ? savedTime : (float?)null;
         _roles = GetComponent<RoleSwapManager>();
         _navigationGraph = new NavigationGraph2D(transform.position, _navigationNodes, _navigationLinks);
     }
@@ -121,6 +132,10 @@ public class AIGameManager2D : MonoBehaviour
         _exit = Array.Find(FindObjectsByType<RoundExit2D>(FindObjectsSortMode.None),
             exit => exit.isActiveAndEnabled && exit.gameObject.scene == gameObject.scene);
         if (_exit != null) _exit.BeginRound();
+        _elapsedTime = 0f;
+        _levelStartedAt = Time.timeAsDouble;
+        _timerRunning = true;
+        _playerDied = false;
         _running = true;
         return true;
     }
@@ -129,6 +144,19 @@ public class AIGameManager2D : MonoBehaviour
     {
         if (!_running || _finished || item == null || _roles == null) return;
         _roles.AddFood(item.FoodUnits);
+    }
+
+    // La muerte invalida el intento y detiene el reloj antes de su animación.
+    internal void PlayerDied()
+    {
+        _playerDied = true;
+        StopLevelTimer();
+    }
+
+    void StopLevelTimer()
+    {
+        _elapsedTime = ElapsedTime;
+        _timerRunning = false;
     }
 
     //Ganan los fantasmas cuando no queda ningún boid vivo.
@@ -147,9 +175,18 @@ public class AIGameManager2D : MonoBehaviour
 
     void Finish(MatchSide winner)
     {
+        StopLevelTimer();
         _running = false;
         _finished = true;
         _winner = winner;
+        // El récord es del nivel, independientemente del bando apostado.
+        if (winner == MatchSide.Pacman && !_playerDied &&
+            (!BestTime.HasValue || _elapsedTime < BestTime.Value))
+        {
+            BestTime = _elapsedTime;
+            PlayerPrefs.SetFloat(_bestTimeKey, _elapsedTime);
+            PlayerPrefs.Save();
+        }
         Debug.Log("Ganó " + winner.DisplayName(), this);
         MatchFinished?.Invoke(winner);
     }

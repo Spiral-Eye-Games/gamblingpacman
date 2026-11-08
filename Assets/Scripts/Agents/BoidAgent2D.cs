@@ -66,6 +66,7 @@ public class BoidAgent2D : MonoBehaviour
     {
         if (!_alive) return;
         _alive = false;
+        if (_manager != null) _manager.PlayerDied();
         _movement.enabled = false;
         _motor.Stop();
         _body.linearVelocity = Vector2.zero;

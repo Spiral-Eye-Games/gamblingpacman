@@ -3813,7 +3813,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4189794362249210323, guid: 82503e57b0b6e3340b0e9f7a3217a69d, type: 3}
       propertyPath: m_Name
-      value: Star (1)
+      value: Key (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8948868300561786776, guid: 82503e57b0b6e3340b0e9f7a3217a69d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4654,7 +4654,7 @@ GameObject:
   - component: {fileID: 748029063}
   - component: {fileID: 748029066}
   m_Layer: 0
-  m_Name: Contadores
+  m_Name: Tiempo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4727,7 +4727,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Tiempo:'
+  m_text: 'Mejor tiempo: --:--.--'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5647,7 +5647,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8295137182620230739, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: m_Name
-      value: Square (2)
+      value: Blinky
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9252,7 +9252,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5905349455027562908, guid: 24c45afec92846b408b67d71aa6f0b3e, type: 3}
       propertyPath: m_Name
-      value: Triangle
+      value: Pacman
       objectReference: {fileID: 0}
     - target: {fileID: 6333248610883600743, guid: 24c45afec92846b408b67d71aa6f0b3e, type: 3}
       propertyPath: m_FlipX
@@ -9321,7 +9321,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4189794362249210323, guid: 82503e57b0b6e3340b0e9f7a3217a69d, type: 3}
       propertyPath: m_Name
-      value: Star
+      value: Key
       objectReference: {fileID: 0}
     - target: {fileID: 8948868300561786776, guid: 82503e57b0b6e3340b0e9f7a3217a69d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9377,6 +9377,9 @@ SceneRoots:
   - {fileID: 1867324887}
   - {fileID: 2100000202}
   - {fileID: 4555861642105703312}
+  - {fileID: 1222923737}
+  - {fileID: 193972122}
+  - {fileID: 1806083751}
   - {fileID: 993257342}
   - {fileID: 1605998578}
   - {fileID: 1751335466}
@@ -9385,6 +9388,3 @@ SceneRoots:
   - {fileID: 8967927924801679657}
   - {fileID: 553816250}
   - {fileID: 672985080}
-  - {fileID: 1222923737}
-  - {fileID: 193972122}
-  - {fileID: 1806083751}

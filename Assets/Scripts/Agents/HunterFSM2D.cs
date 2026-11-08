@@ -8,6 +8,8 @@ using UnityEngine;
 public class HunterFSM2D : MonoBehaviour
 {
     static readonly int IsHuntingParameter = Animator.StringToHash("IsHunting");
+    static readonly int DieParameter = Animator.StringToHash("Die");
+    static readonly int ReviveParameter = Animator.StringToHash("Revive");
 
     [SerializeField] AIGameManager2D _manager;
     [SerializeField, Min(0.1f)] float _viewRadius = 5f;
@@ -15,6 +17,11 @@ public class HunterFSM2D : MonoBehaviour
     [SerializeField] LayerMask _walls;
     [SerializeField, Min(0.01f), Tooltip("Radio de colisión contra paredes en unidades del mundo.")]
     float _bodyRadius = 0.22f;
+
+    [Header("Reaparición")]
+    [SerializeField, Min(0.1f), InspectorName("Tiempo para revivir"),
+        Tooltip("Segundos desde la captura. El fantasma permanece en el lugar con su animación de muerte.")]
+    float _reviveDelay = 5f;
 
     [Header("Patrulla individual")]
     [SerializeField, InspectorName("Nodos de patrulla"),
@@ -172,13 +179,30 @@ public class HunterFSM2D : MonoBehaviour
         _route.Clear();
         _motor.IsFleeing = false;
         _motor.Stop();
-        StartCoroutine(Die());
+        StartCoroutine(DieAndRevive());
     }
 
-    IEnumerator Die()
+    IEnumerator DieAndRevive()
     {
+        float reviveAt = Time.time + _reviveDelay;
         yield return AgentDeathAnimation2D.Play(_animator);
-        gameObject.SetActive(false);
+        while (Time.time < reviveAt || !isActiveAndEnabled)
+        {
+            if (_manager == null || _manager.IsFinished) yield break;
+            yield return null;
+        }
+        if (_manager == null || !_manager.IsRunning) yield break;
+
+        // Reutilizá la reincorporación por el grafo, sin cambiar la posición ni los nodos configurados.
+        ReturnToPatrol();
+        _lastPosition = _motor.Position;
+        _alive = true;
+        if (_animator != null)
+        {
+            _animator.ResetTrigger(DieParameter);
+            _animator.SetBool(IsHuntingParameter, !_manager.Roles.PacmanIsHunter);
+            _animator.SetTrigger(ReviveParameter);
+        }
     }
 
     void OnDrawGizmosSelected()

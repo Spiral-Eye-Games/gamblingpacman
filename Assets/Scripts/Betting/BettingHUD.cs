@@ -15,7 +15,7 @@ public class BettingHUD : MonoBehaviour
 
     TMP_Text _matchStateText;
     TMP_Text _phaseText;
-    TMP_Text _countsText;
+    TMP_Text _timeText;
     TMP_Text _balanceText;
     TMP_Text _betSummaryText;
     TMP_Text _coinPriceText;
@@ -85,7 +85,7 @@ public class BettingHUD : MonoBehaviour
 
         _matchStateText = FindUI<TMP_Text>(matchPanel, "Estado");
         _phaseText = FindUI<TMP_Text>(matchPanel, "Cazador actual");
-        _countsText = FindUI<TMP_Text>(matchPanel, "Contadores");
+        _timeText = FindUI<TMP_Text>(matchPanel, "Tiempo");
         _balanceText = FindUI<TMP_Text>(bettingPanel, "Saldo y meta");
         _betSummaryText = FindUI<TMP_Text>(beforeRound, "Apuesta confirmada");
         _coinPriceText = FindUI<TMP_Text>(beforeRound, "Precio moneda");
@@ -138,7 +138,7 @@ public class BettingHUD : MonoBehaviour
 
     void Update()
     {
-        // Los contadores y el rol temporizado pueden cambiar durante la simulación.
+        // El cronómetro y el rol temporizado cambian durante la simulación.
         RefreshMatch();
     }
 
@@ -161,16 +161,9 @@ public class BettingHUD : MonoBehaviour
         SetText(_phaseText, _match.Roles != null && _match.Roles.PacmanIsHunter
             ? "Pacman caza" : "Fantasmas cazan");
 
-        int boids = 0;
-        int ghosts = 0;
-        for (int i = 0; i < _match.Boids.Count; i++)
-            if (_match.Boids[i] != null && _match.Boids[i].IsAlive) boids++;
-        for (int i = 0; i < _match.Hunters.Count; i++)
-            if (_match.Hunters[i] != null && _match.Hunters[i].IsAlive) ghosts++;
-        int food = _match.Roles != null ? _match.Roles.FoodEaten : 0;
-        int needed = _match.Roles != null ? _match.Roles.FoodNeeded : 0;
-        SetText(_countsText, "Comida: " + food + "/" + needed +
-            "    Pac-Man: " + boids + "    Fantasmas: " + ghosts);
+        SetText(_timeText, _betting.IsRunning
+            ? "Tiempo: " + FormatTime(_match.ElapsedTime)
+            : "Mejor tiempo: " + (_match.BestTime.HasValue ? FormatTime(_match.BestTime.Value) : "--:--.--"));
     }
 
     void RefreshBetting()
@@ -213,6 +206,8 @@ public class BettingHUD : MonoBehaviour
         if (_betting.MatchFinished)
         {
             string result = "Ganó " + _betting.LastWinner.DisplayName() + ".";
+            if (_betting.LastWinner == MatchSide.Pacman)
+                result += "\nTiempo del nivel: " + FormatTime(_match.ElapsedTime);
             if (_betting.GoalReached)
                 result += "\n¡Llegaste a la meta! Ganaste.";
             else if (_betting.Bankrupt)
@@ -221,6 +216,12 @@ public class BettingHUD : MonoBehaviour
             SetActive(_nextRoundButton.gameObject,
                 !_betting.GoalReached && !_betting.Bankrupt);
         }
+    }
+
+    static string FormatTime(float seconds)
+    {
+        TimeSpan time = TimeSpan.FromSeconds(seconds);
+        return $"{(int)time.TotalMinutes:00}:{time.Seconds:00}.{time.Milliseconds / 10:00}";
     }
 
     static void SetText(TMP_Text label, string value)

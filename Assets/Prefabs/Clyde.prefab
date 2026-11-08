@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 042ebc69f32079c4d9f2a8dc9ad5b2a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxSpeed: 1.75
+  _maxSpeed: 1.5
   _faceVelocity: 1
   _spriteAngleOffset: 0
   _fleeSpeedMultiplier: 1.5
@@ -158,6 +158,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _bodyRadius: 0.2
+  _reviveDelay: 5
   _patrolNodes: 
   _patrolEntryNode: -1
 --- !u!95 &3769906556473471505
