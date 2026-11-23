@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 // Coloca comida inicial y genera otra a intervalos durante la ronda.
@@ -33,6 +34,9 @@ public class FoodSpawner2D : MonoBehaviour
 
     AIGameManager2D _manager;
     float _timer;
+    Action _updateState = delegate { };
+    Action _spawnDuringRound = delegate { };
+    Action _connectOnEnable = delegate { };
 
     void Start()
     {
@@ -54,19 +58,44 @@ public class FoodSpawner2D : MonoBehaviour
                 break;
             }
         }
+        _spawnDuringRound = SpawnDuringRound;
+        if (_manager != null)
+        {
+            _connectOnEnable = ConnectStateEvents;
+            ConnectStateEvents();
+        }
     }
 
+    void OnEnable() => _connectOnEnable();
+
+    void ConnectStateEvents()
+    {
+        _manager.MatchStarted += StartSpawning;
+        _manager.MatchFinished += StopSpawning;
+        _updateState = _manager.IsRunning ? _spawnDuringRound : delegate { };
+    }
+
+    void OnDisable()
+    {
+        if (_manager == null) return;
+        _manager.MatchStarted -= StartSpawning;
+        _manager.MatchFinished -= StopSpawning;
+    }
+
+    void StartSpawning() => _updateState = _spawnDuringRound;
+    void StopSpawning(MatchSide winner) => _updateState = delegate { };
+
     //el timer solo avanza mientras la ronda está en curso.
-    void Update()
+    void Update() => _updateState();
+
+    void SpawnDuringRound()
     {
         if (_foodPrefab == null || _areas.Length == 0) return;
-        if (_manager == null || !_manager.IsRunning) return;
-
         _timer += Time.deltaTime;
         if (_timer < _respawnSeconds) return;
 
         _timer = 0f;
-        SpawnFood(_areas[Random.Range(0, _areas.Length)]); //una zona al azar
+        SpawnFood(_areas[UnityEngine.Random.Range(0, _areas.Length)]); //una zona al azar
     }
 
     //busca un lugar libre dentro de la zona y pone una comida. false si no encontró lugar.

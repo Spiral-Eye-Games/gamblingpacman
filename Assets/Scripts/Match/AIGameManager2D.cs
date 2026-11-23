@@ -26,8 +26,16 @@ public class AIGameManager2D : MonoBehaviour
     bool _timerRunning;
     bool _playerDied;
     string _bestTimeKey;
+    Action _lateUpdateState = delegate { };
+    Action _tryCompleteLevel = delegate { };
+    Action<FoodPickup2D> _consumeFood = delegate { };
+    Action _boidCaught = delegate { };
+    Action<BoidAgent2D, HunterFSM2D> _capture;
+    Action<HunterFSM2D, BoidAgent2D, Vector2> _reportSighting = delegate { };
 
+    public event Action MatchStarted;
     public event Action<MatchSide> MatchFinished;
+    internal event Action<BoidAgent2D, Vector2> PacmanSpotted;
 
     public List<BoidAgent2D> Boids => _boids;
     public List<HunterFSM2D> Hunters => _hunters;
@@ -56,6 +64,11 @@ public class AIGameManager2D : MonoBehaviour
         float savedTime = PlayerPrefs.GetFloat(_bestTimeKey, -1f);
         BestTime = savedTime >= 0f ? savedTime : (float?)null;
         _roles = GetComponent<RoleSwapManager>();
+        if (_roles != null)
+        {
+            _roles.RoleChanged += SelectCapture;
+            SelectCapture(_roles.PacmanIsHunter);
+        }
         _navigationGraph = new NavigationGraph2D(transform.position, _navigationNodes, _navigationLinks);
     }
 
@@ -71,25 +84,33 @@ public class AIGameManager2D : MonoBehaviour
 
     void OnDestroy()
     {
+        if (_roles != null) _roles.RoleChanged -= SelectCapture;
         if (Instance == this) Instance = null;
     }
 
     //--- Fin de cada frame: los agentes ya se movieron en su Update ---
 
-    void LateUpdate()
-    {
-        if (!_running) return;
+    void LateUpdate() => _lateUpdateState();
 
+    void RunMatchFrame()
+    {
         ResolveCaptures();
-        if (_running && _exit != null && _exit.TryFinish(_boids))
-            Finish(MatchSide.Pacman);
+        _tryCompleteLevel();
         MarkFrameEnd();
     }
+
+    void TryCompleteLevel()
+    {
+        if (_exit != null && _exit.TryFinish(_boids)) Finish(MatchSide.Pacman);
+    }
+
+    void SelectCapture(bool pacmanHunts) => _capture = pacmanHunts ? CaptureGhost : CapturePacman;
+    static void CaptureGhost(BoidAgent2D boid, HunterFSM2D ghost) => ghost.CaughtByPacman();
+    static void CapturePacman(BoidAgent2D boid, HunterFSM2D ghost) => boid.Caught();
 
     // La captura depende del bando cazador.
     void ResolveCaptures()
     {
-        if (_roles == null || !_running) return;
         bool pacmanHunts = _roles.PacmanIsHunter;
 
         for (int i = 0; i < _boids.Count; i++)
@@ -104,8 +125,7 @@ public class AIGameManager2D : MonoBehaviour
                 if (!CaptureContact2D.PathsTouch(boid.Motor, ghost.Motor, radius))
                     continue;
 
-                if (pacmanHunts) ghost.CaughtByPacman();
-                else boid.Caught();
+                _capture(boid, ghost);
                 return; // una captura puede cambiar el resultado y las listas
             }
         }
@@ -137,12 +157,30 @@ public class AIGameManager2D : MonoBehaviour
         _timerRunning = true;
         _playerDied = false;
         _running = true;
+        _lateUpdateState = RunMatchFrame;
+        _tryCompleteLevel = TryCompleteLevel;
+        _consumeFood = ConsumeFood;
+        _boidCaught = TryFinishDefeat;
+        _reportSighting = BroadcastSighting;
+        MatchStarted?.Invoke();
         return true;
     }
 
-    public void FoodConsumed(FoodPickup2D item)
+    public void FoodConsumed(FoodPickup2D item) => _consumeFood(item);
+
+    internal void ReportPacmanSighting(HunterFSM2D observer, BoidAgent2D target, Vector2 position) =>
+        _reportSighting(observer, target, position);
+
+    void BroadcastSighting(HunterFSM2D observer, BoidAgent2D target, Vector2 position)
     {
-        if (!_running || _finished || item == null || _roles == null) return;
+        if (observer == null || !observer.IsAlive || !_hunters.Contains(observer) ||
+            target == null || !target.IsAlive || !_boids.Contains(target)) return;
+        PacmanSpotted?.Invoke(target, position);
+    }
+
+    void ConsumeFood(FoodPickup2D item)
+    {
+        if (item == null) return;
         _roles.AddFood(item.FoodUnits);
     }
 
@@ -160,9 +198,11 @@ public class AIGameManager2D : MonoBehaviour
     }
 
     //Ganan los fantasmas cuando no queda ningún boid vivo.
-    public void BoidCaught()
+    public void BoidCaught() => _boidCaught();
+
+    void TryFinishDefeat()
     {
-        if (!_running || _finished || AnyBoidAlive()) return;
+        if (AnyBoidAlive()) return;
         Finish(MatchSide.Ghosts);
     }
 
@@ -175,6 +215,11 @@ public class AIGameManager2D : MonoBehaviour
 
     void Finish(MatchSide winner)
     {
+        _lateUpdateState = delegate { };
+        _tryCompleteLevel = delegate { };
+        _consumeFood = delegate { };
+        _boidCaught = delegate { };
+        _reportSighting = delegate { };
         StopLevelTimer();
         _running = false;
         _finished = true;

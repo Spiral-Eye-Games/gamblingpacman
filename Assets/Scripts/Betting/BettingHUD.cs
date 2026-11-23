@@ -38,7 +38,8 @@ public class BettingHUD : MonoBehaviour
     GameObject _finishedGroup;
 
     string _message = "Elegí un monto y un bando.";
-    bool _initialized;
+    Action _connectOnEnable = delegate { };
+    Action _refreshPhase = delegate { };
 
     void Start()
     {
@@ -68,7 +69,7 @@ public class BettingHUD : MonoBehaviour
         _amountInput.contentType = TMP_InputField.ContentType.IntegerNumber;
         _amountInput.characterLimit = 8;
         if (string.IsNullOrEmpty(_amountInput.text)) _amountInput.text = "100";
-        _initialized = true;
+        _connectOnEnable = ConnectStateEvents;
         ConnectStateEvents();
     }
 
@@ -116,10 +117,7 @@ public class BettingHUD : MonoBehaviour
             $"BettingHUD: falta {typeof(T).Name} en '{root.name}/{path}'. Revisá la jerarquía del HUD Canvas.");
     }
 
-    void OnEnable()
-    {
-        if (_initialized) ConnectStateEvents();
-    }
+    void OnEnable() => _connectOnEnable();
 
     void ConnectStateEvents()
     {
@@ -130,8 +128,6 @@ public class BettingHUD : MonoBehaviour
 
     void OnDisable()
     {
-        if (!_initialized) return;
-
         if (_betting != null) _betting.StateChanged -= Refresh;
         if (_coin != null) _coin.Changed -= RefreshBetting;
     }
@@ -144,6 +140,8 @@ public class BettingHUD : MonoBehaviour
 
     void Refresh()
     {
+        _refreshPhase = _betting.MatchFinished ? RefreshFinished : _betting.IsRunning ? RefreshRunning :
+            _betting.HasBet ? RefreshBeforeRound : delegate { };
         RefreshMatch();
         RefreshBetting();
         if (_betting != null)
@@ -184,38 +182,42 @@ public class BettingHUD : MonoBehaviour
         if (_retryButton != null)
             SetActive(_retryButton.gameObject, _betting.GoalReached || _betting.Bankrupt);
 
-        if (beforeRound)
-        {
-            SetText(_betSummaryText, "Apuesta: $" + _betting.Stake + " a " +
-                _betting.BetSide.DisplayName());
-            SetText(_coinPriceText, _coin != null
-                ? "Moneda opcional: $" + _coin.Cost : "Moneda no disponible");
-            SetActive(_coinChoiceGroup, _coin != null && !_coin.HasFlipped);
-            _headsButton.interactable = _betting.CanBuyCoin;
-            _tailsButton.interactable = _betting.CanBuyCoin;
-            SetText(_coinResultText, _coin != null && _coin.HasFlipped
-                ? "Salió " + (_coin.WasHeads ? "cara" : "cruz") +
-                  ". Boost para " + _coin.BoostSide.DisplayName()
-                : "");
-        }
+        _refreshPhase();
+    }
 
-        if (_betting.IsRunning)
-            SetText(_runningText, "Simulación en curso. Apostaste $" +
-                _betting.Stake + " a " + _betting.BetSide.DisplayName() + ".");
+    void RefreshBeforeRound()
+    {
+        SetText(_betSummaryText, "Apuesta: $" + _betting.Stake + " a " +
+            _betting.BetSide.DisplayName());
+        SetText(_coinPriceText, _coin != null
+            ? "Moneda opcional: $" + _coin.Cost : "Moneda no disponible");
+        SetActive(_coinChoiceGroup, _coin != null && !_coin.HasFlipped);
+        _headsButton.interactable = _betting.CanBuyCoin;
+        _tailsButton.interactable = _betting.CanBuyCoin;
+        SetText(_coinResultText, _coin != null && _coin.HasFlipped
+            ? "Salió " + (_coin.WasHeads ? "cara" : "cruz") +
+              ". Boost para " + _coin.BoostSide.DisplayName()
+            : "");
+    }
 
-        if (_betting.MatchFinished)
-        {
-            string result = "Ganó " + _betting.LastWinner.DisplayName() + ".";
-            if (_betting.LastWinner == MatchSide.Pacman)
-                result += "\nTiempo del nivel: " + FormatTime(_match.ElapsedTime);
-            if (_betting.GoalReached)
-                result += "\n¡Llegaste a la meta! Ganaste.";
-            else if (_betting.Bankrupt)
-                result += "\nTe quedaste sin dinero. Fin del juego.";
-            SetText(_outcomeText, result);
-            SetActive(_nextRoundButton.gameObject,
-                !_betting.GoalReached && !_betting.Bankrupt);
-        }
+    void RefreshRunning()
+    {
+        SetText(_runningText, "Simulación en curso. Apostaste $" +
+            _betting.Stake + " a " + _betting.BetSide.DisplayName() + ".");
+    }
+
+    void RefreshFinished()
+    {
+        string result = "Ganó " + _betting.LastWinner.DisplayName() + ".";
+        if (_betting.LastWinner == MatchSide.Pacman)
+            result += "\nTiempo del nivel: " + FormatTime(_match.ElapsedTime);
+        if (_betting.GoalReached)
+            result += "\n¡Llegaste a la meta! Ganaste.";
+        else if (_betting.Bankrupt)
+            result += "\nTe quedaste sin dinero. Fin del juego.";
+        SetText(_outcomeText, result);
+        SetActive(_nextRoundButton.gameObject,
+            !_betting.GoalReached && !_betting.Bankrupt);
     }
 
     static string FormatTime(float seconds)

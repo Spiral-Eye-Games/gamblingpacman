@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer), typeof(Animator))]
 [DisallowMultipleComponent]
 public sealed class RoundExit2D : MonoBehaviour
 {
     readonly StarCollection2D _stars = new StarCollection2D();
     SpriteRenderer _sprite;
+    Animator _portalAnimator;
     Color _unlockedColor;
 
     void Awake()
     {
         _sprite = GetComponent<SpriteRenderer>();
+        _portalAnimator = GetComponent<Animator>();
         _unlockedColor = _sprite.color;
-        _sprite.color = new Color(_unlockedColor.r * 0.4f, _unlockedColor.g * 0.4f,
-            _unlockedColor.b * 0.4f, _unlockedColor.a);
+        Lock();
         _stars.Completed += Unlock;
     }
 
@@ -25,7 +26,20 @@ public sealed class RoundExit2D : MonoBehaviour
 
     internal void BeginRound()
     {
+        Lock();
         _stars.Begin(FindSceneStars());
+    }
+
+    void Lock()
+    {
+        _portalAnimator.speed = 0f;
+        if (_portalAnimator.runtimeAnimatorController != null)
+        {
+            _portalAnimator.Play(0, 0, 0f);
+            _portalAnimator.Update(0f);
+        }
+        _sprite.color = new Color(_unlockedColor.r * 0.4f, _unlockedColor.g * 0.4f,
+            _unlockedColor.b * 0.4f, _unlockedColor.a);
     }
 
     IEnumerable<StarPickup2D> FindSceneStars()
@@ -40,6 +54,7 @@ public sealed class RoundExit2D : MonoBehaviour
     void Unlock()
     {
         _sprite.color = _unlockedColor;
+        _portalAnimator.speed = 1f;
     }
 
     internal bool TryFinish(IReadOnlyList<BoidAgent2D> players)

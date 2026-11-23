@@ -5,20 +5,22 @@ public class SteeringGhost : Steering
 {
     [SerializeField, Min(1f)] float _fleeSpeedMultiplier = 1.5f;
 
-    SpriteRenderer _sprite;
+    Transform _bodyVisual;
 
     internal bool IsFleeing { get; set; }
     public override float MaxSpeed => IsFleeing ? base.MaxSpeed * _fleeSpeedMultiplier : base.MaxSpeed;
 
     void Awake()
     {
-        _sprite = GetComponent<SpriteRenderer>();
+        _bodyVisual = transform.Find("Body");
     }
 
     protected override void FaceVelocity()
     {
-        if (_sprite == null || Mathf.Abs(Velocity.x) <= 0.01f) return;
-        _sprite.flipX = Velocity.x < 0f;
+        if (_bodyVisual == null) return;
+        // El eje +Y del Body (la parte superior de la cabeza) sigue la velocidad.
+        float angle = Mathf.Atan2(Velocity.y, Velocity.x) * Mathf.Rad2Deg - 90f;
+        _bodyVisual.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     internal void ClearShallowWallOverlap(Rect arena, LayerMask walls, float radius)

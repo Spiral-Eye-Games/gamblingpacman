@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,17 +19,24 @@ public class PlayerMovement : MonoBehaviour
     Animator _animator;
     PhysicsMaterial2D _contactMaterial;
     Vector2 _input;
+    BettingManager _betting;
+    Action _readInput;
+    Action _fixedStep;
+    Action _moveStep;
+    Action _holdMovement;
+    Action _moveForward;
+    Action _animate;
+    Action _finishPhysics;
+    Action _enterRunning;
+    Action _enterStopped;
+    Action _connectOnEnable = delegate { };
 
     //memento de posición y rotación (el propio script es Originator y Caretaker)*
     Vector2 _savedPosition;
     float _savedRotation;
-    bool _wasRunning;
 
     public LayerMask Walls => _walls;
     public float BodyRadius => _bodyRadius;
-
-    //se mueve solo mientras la ronda corre (o si no hay BettingManager en la escena)*
-    bool CanMove => BettingManager.Instance == null || BettingManager.Instance.IsRunning;
 
     void Awake()
     {
@@ -51,19 +59,70 @@ public class PlayerMovement : MonoBehaviour
             bounciness = 0f
         };
         circle.sharedMaterial = _contactMaterial;
+        _holdMovement = HoldStill;
+        _moveForward = MoveForward;
+        _readInput = IgnoreInput;
+        _fixedStep = HoldStill;
+        _moveStep = HoldStill;
+        _animate = PauseAnimation;
+        _finishPhysics = HoldStill;
+        _enterRunning = EnterRunning;
+        _enterStopped = delegate { };
+    }
+
+    void Start()
+    {
+        _betting = BettingManager.Instance;
+        _connectOnEnable = ConnectStateEvents;
+        ConnectStateEvents();
+    }
+
+    void ConnectStateEvents()
+    {
+        if (_betting != null) _betting.StateChanged += SelectMovementState;
+        SelectMovementState();
+    }
+
+    void SelectMovementState()
+    {
+        // La condición se evalúa al cambiar la ronda, no en cada Update/FixedUpdate.
+        Action enterState = _betting == null || _betting.IsRunning ? _enterRunning : _enterStopped;
+        enterState();
+    }
+
+    void EnterRunning()
+    {
+        _enterRunning = delegate { };
+        _enterStopped = EnterStopped;
+        _readInput = ReadInput;
+        _fixedStep = BeginMovement;
+        _animate = AnimateMovement;
+    }
+
+    void EnterStopped()
+    {
+        _enterRunning = EnterRunning;
+        _enterStopped = delegate { };
+        _readInput = IgnoreInput;
+        IgnoreInput();
+        _fixedStep = _finishPhysics;
+        _animate = PauseAnimation;
     }
 
     void OnEnable()
     {
         if (_move != null) _move.action?.Enable();
+        _connectOnEnable();
     }
 
     void OnDisable()
     {
         if (_move != null) _move.action?.Disable();
+        if (_betting != null) _betting.StateChanged -= SelectMovementState;
         _input = Vector2.zero;
+        _moveStep = HoldStill;
         if (_body != null) _body.linearVelocity = Vector2.zero;
-        if (_animator != null) _animator.speed = 0f;
+        PauseAnimation();
     }
 
     void OnDestroy()
@@ -71,39 +130,43 @@ public class PlayerMovement : MonoBehaviour
         if (_contactMaterial != null) Destroy(_contactMaterial);
     }
 
-    void Update()
-    {
-        //sin ronda en curso, el input se trata como cero*
-        if (!CanMove)
-        {
-            _input = Vector2.zero;
-            return;
-        }
+    void Update() => _readInput();
 
+    void ReadInput()
+    {
         _input = _move != null ? _move.action?.ReadValue<Vector2>() ?? Vector2.zero : Vector2.zero;
+        _moveStep = _input == Vector2.zero ? _holdMovement : _moveForward;
     }
 
-    void FixedUpdate()
+    void IgnoreInput()
     {
-        //detecta el inicio y el fin de la ronda*
-        bool running = CanMove;
-        if (running && !_wasRunning) SaveSnapshot();
-        else if (!running && _wasRunning) RestoreSnapshot();
-        _wasRunning = running;
+        _input = Vector2.zero;
+        _moveStep = HoldStill;
+    }
 
-        //frenado mientras la ronda no corre*
-        if (!running)
-        {
-            _body.linearVelocity = Vector2.zero;
-            return;
-        }
+    void FixedUpdate() => _fixedStep();
 
-        if (_input == Vector2.zero)
-        {
-            _body.linearVelocity = Vector2.zero;
-            return;
-        }
+    void BeginMovement()
+    {
+        SaveSnapshot();
+        _fixedStep = ApplyMovement;
+        _finishPhysics = RestoreAndStop;
+        ApplyMovement();
+    }
 
+    void ApplyMovement() => _moveStep();
+
+    void RestoreAndStop()
+    {
+        RestoreSnapshot();
+        _fixedStep = HoldStill;
+        _finishPhysics = HoldStill;
+    }
+
+    void HoldStill() => _body.linearVelocity = Vector2.zero;
+
+    void MoveForward()
+    {
         float target = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg - _spriteForwardAngle;
         float angle = Mathf.MoveTowardsAngle(_body.rotation, target, _turnSpeed * Time.fixedDeltaTime);
         _body.rotation = angle;
@@ -114,10 +177,17 @@ public class PlayerMovement : MonoBehaviour
         _body.linearVelocity = forward * _speed;
     }
 
-    void LateUpdate()
+    void LateUpdate() => _animate();
+
+    void AnimateMovement()
     {
         if (_animator != null)
-            _animator.speed = CanMove && _body.linearVelocity.sqrMagnitude > 0.0001f ? 1f : 0f;
+            _animator.speed = _body.linearVelocity.sqrMagnitude > 0.0001f ? 1f : 0f;
+    }
+
+    void PauseAnimation()
+    {
+        if (_animator != null) _animator.speed = 0f;
     }
 
     //memento (foto de posición y rotación)*

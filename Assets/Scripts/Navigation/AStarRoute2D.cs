@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -128,6 +129,19 @@ internal sealed class AStarRoute2D
 
     public void PlanFlee(AIGameManager2D manager, Vector2 threat, float viewRadius)
     {
+        IReadOnlyList<Vector2> nodes = manager.NavigationNodes;
+        PlanFlee(manager, threat, node => manager.FindNearestBoid(nodes[node], viewRadius, _walls) == null);
+    }
+
+    public void PlanFleeFromPosition(AIGameManager2D manager, Vector2 threat, float safeDistance)
+    {
+        IReadOnlyList<Vector2> nodes = manager.NavigationNodes;
+        float safeDistanceSqr = safeDistance * safeDistance;
+        PlanFlee(manager, threat, node => (nodes[node] - threat).sqrMagnitude >= safeDistanceSqr);
+    }
+
+    void PlanFlee(AIGameManager2D manager, Vector2 threat, Predicate<int> isSafe)
+    {
         int anchor = PlanClosestNode(manager);
         if (anchor < 0) return;
 
@@ -135,7 +149,7 @@ internal sealed class AStarRoute2D
         // Con heurística cero, la PriorityQueue encuentra el refugio de menor costo por los enlaces.
         if (AStarPathfinding2D.TryFindLinkedPath(manager.ArenaBounds, nodes,
             manager.NavigationNeighbors, anchor,
-            node => manager.FindNearestBoid(nodes[node], viewRadius, _walls) == null,
+            isSafe,
             null, _walls, _radius, _candidateLinkedNodes))
         {
             AppendLinkedPath(nodes);

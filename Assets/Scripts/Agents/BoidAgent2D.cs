@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ public class BoidAgent2D : MonoBehaviour
     PlayerMovement _movement;
     Rigidbody2D _body;
     bool _alive = true;
+    Action _updateState = delegate { };
+    Action _caughtAction = delegate { };
 
     public Steering Motor => _motor;
     public float CaptureRadius => _pickupRadius;
@@ -28,6 +31,8 @@ public class BoidAgent2D : MonoBehaviour
         _body = GetComponent<Rigidbody2D>();
         BodyRadius = _movement.BodyRadius;
         _motor.ConfigureWallCollision(_movement.Walls, BodyRadius);
+        _updateState = CollectFood;
+        _caughtAction = BeginDeath;
     }
 
     void Start()
@@ -47,10 +52,10 @@ public class BoidAgent2D : MonoBehaviour
         if (_manager != null) _manager.UnregisterBoid(this);
     }
 
-    void Update()
-    {
-        if (!_alive) return;
+    void Update() => _updateState();
 
+    void CollectFood()
+    {
         foreach (FoodPickup2D food in _manager.Food)
         {
             if (food == null || !food.IsAvailable) continue;
@@ -62,9 +67,13 @@ public class BoidAgent2D : MonoBehaviour
     internal bool IsInPickupRange(Vector2 point) =>
         (point - (Vector2)transform.position).sqrMagnitude <= _pickupRadius * _pickupRadius;
 
-    public void Caught()
+    public void Caught() => _caughtAction();
+
+    void BeginDeath()
     {
-        if (!_alive) return;
+        // Cambiar las acciones primero hace que la captura sea idempotente.
+        _updateState = delegate { };
+        _caughtAction = delegate { };
         _alive = false;
         if (_manager != null) _manager.PlayerDied();
         _movement.enabled = false;
