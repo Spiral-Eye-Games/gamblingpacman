@@ -1214,7 +1214,7 @@ PrefabInstance:
       objectReference: {fileID: 1867324886}
     - target: {fileID: 6430442455265389251, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: _patrolEntryNode
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: _patrolNodes.Array.size
@@ -1222,15 +1222,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: '_patrolNodes.Array.data[0]'
-      value: 14
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: '_patrolNodes.Array.data[1]'
-      value: 12
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: '_patrolNodes.Array.data[2]'
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 8295137182620230739, guid: eb2082a0140a2d74d8254e3e59318c4f, type: 3}
       propertyPath: m_Name
@@ -3626,7 +3626,7 @@ PrefabInstance:
       objectReference: {fileID: 1867324886}
     - target: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: _patrolEntryNode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: _patrolNodes.Array.size
@@ -3634,15 +3634,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: '_patrolNodes.Array.data[0]'
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: '_patrolNodes.Array.data[1]'
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: '_patrolNodes.Array.data[2]'
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8295137182620230739, guid: 42a7c09b33fb0d143aedd6daf13047a2, type: 3}
       propertyPath: m_Name
@@ -4291,11 +4291,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2691333960683455055, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.32
+      value: -7.27
       objectReference: {fileID: 0}
     - target: {fileID: 2691333960683455055, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.68
+      value: 4.52
       objectReference: {fileID: 0}
     - target: {fileID: 2691333960683455055, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4335,7 +4335,7 @@ PrefabInstance:
       objectReference: {fileID: 1867324886}
     - target: {fileID: 6430442455265389251, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: _patrolEntryNode
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: _patrolNodes.Array.size
@@ -4343,15 +4343,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: '_patrolNodes.Array.data[0]'
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: '_patrolNodes.Array.data[1]'
-      value: 7
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: '_patrolNodes.Array.data[2]'
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8295137182620230739, guid: 8321b59859c9814479cd4da11993e2db, type: 3}
       propertyPath: m_Name
@@ -5338,7 +5338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: _patrolEntryNode
-      value: 9
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: _patrolNodes.Array.size
@@ -5346,15 +5346,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: '_patrolNodes.Array.data[0]'
-      value: 9
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: '_patrolNodes.Array.data[1]'
-      value: 10
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6430442455265389251, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: '_patrolNodes.Array.data[2]'
-      value: 8
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 8295137182620230739, guid: 17cfc36145f3de54fbdb30d251c6c2cb, type: 3}
       propertyPath: m_Name
@@ -5551,7 +5551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0309870f11774222ab09b2099e3e4622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _arenaSize: {x: 17.4, y: 9.6}
+  _arenaSize: {x: 18, y: 9.6}
   _navigationNodes:
   - {x: 1.1615357, y: -1.1419889}
   - {x: 4.1432757, y: -1.150306}
@@ -6352,19 +6352,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _foodPrefab: {fileID: 3336899727441703313, guid: d3b4cf1a5e8eb7746918df497d3c59bd, type: 3}
   _areas:
-  - _localCenter: {x: 0.32, y: -3.61}
+  - _localCenter: {x: 0, y: -4}
     _size: {x: 5.06, y: 1.85}
     _amount: 1
-  - _localCenter: {x: 2.31, y: 3.62}
+  - _localCenter: {x: 4.5, y: 4.5}
     _size: {x: 9.02, y: 1.92}
     _amount: 1
   - _localCenter: {x: 2.6, y: -1.1}
     _size: {x: 4.7, y: 1.3}
     _amount: 1
-  - _localCenter: {x: -3.7, y: -1.3}
+  - _localCenter: {x: -5.7, y: -1.1}
     _size: {x: 5.75, y: 1.5}
     _amount: 1
-  - _localCenter: {x: -2.6, y: 1}
+  - _localCenter: {x: -2.6, y: 2.3}
     _size: {x: 4.5, y: 1.7}
     _amount: 1
   _clearance: 0.35

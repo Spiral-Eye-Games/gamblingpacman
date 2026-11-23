@@ -66,6 +66,9 @@ internal sealed class AStarRoute2D
 
     public void PlanChase(AIGameManager2D manager, Vector2 destination)
     {
+        Rect arena = manager.ArenaBounds;
+        // Pacman también puede moverse junto al borde, fuera del margen del fantasma.
+        destination = ClampToArena(destination);
         // El jugador puede caber más cerca de la pared que el Hunter.
         for (int attempt = 0; attempt < 4; attempt++)
         {
@@ -75,10 +78,16 @@ internal sealed class AStarRoute2D
             Vector2 closest = wall.ClosestPoint(destination);
             Vector2 away = destination - closest;
             if (away.sqrMagnitude == 0f) return;
-            destination = closest + away.normalized * (_radius + ChaseWallClearance);
+            destination = ClampToArena(closest + away.normalized * (_radius + ChaseWallClearance));
         }
 
         TryPlan(manager, destination);
+
+        Vector2 ClampToArena(Vector2 point) => new Vector2(
+            Mathf.Clamp(point.x, arena.xMin + _radius + ChaseWallClearance,
+                arena.xMax - _radius - ChaseWallClearance),
+            Mathf.Clamp(point.y, arena.yMin + _radius + ChaseWallClearance,
+                arena.yMax - _radius - ChaseWallClearance));
     }
 
     void UseCandidate()
